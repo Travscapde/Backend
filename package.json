@@ -9,9 +9,8 @@
   },
   "author": "syeem",
   "license": "MIT",
-  
   "dependencies": {
-    "express": "^4.12.3"
+    "express": "^4.12.3",
+    "winston": "^2.2.0"
   }
 }
-
