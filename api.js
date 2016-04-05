@@ -2,6 +2,14 @@ var express = require('express');
 var router = express.Router();
 var winston = require('winston');
 
+//var mongoose = require('mongoose');
+//var User = require('./models/user');
+var db_manager = require('./db-manager.js');
+var db = new db_manager();
+
+var dummy = require('./dummy.js');
+var dummyInstance = new dummy();
+
 //setup logger
 var logger = new (winston.Logger)({
     transports: [
@@ -27,23 +35,38 @@ router.get('/about', function(req, res) {
 });
 
 router.get("/getImages", function(req, res) {
-    var imgs = ["https://s3-ap-southeast-1.amazonaws.com/travnet/1.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/2.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/3.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/4.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/5.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/6.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/7.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/8.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/9.jpg",
-        "https://s3-ap-southeast-1.amazonaws.com/travnet/10.jpg"]
-
-    res.json({ "image": imgs });
+    res.json(dummyInstance.getImages());
 });
 
 router.get("/getImage", function(req, res) {
-    var imgs = ["https://s3-ap-southeast-1.amazonaws.com/travnet/1.jpg"];
-    res.json({ "image": imgs });
+    res.json(dummyInstance.getImage());
 });
+
+router.get("/getCards", function(req, res) {
+    res.json(dummyInstance.getCards());
+});
+
+
+router.get("/add-user", function(req, res) {
+
+    //mongoose.connect('mongodb://localhost/myappdatabase');
+    // create a new user
+    /*var newUser = User({
+        name: 'Peter Quill',
+        username: 'starlord55',
+       password: 'password',
+        admin: true
+    });
+    // save the user
+    newUser.save(function(err) {
+        if (err) res.json({ 'message': 'Error creating User' });;
+
+        res.json({ 'message': 'Added User!' });
+        console.log('User created!');
+    });
+
+    //db.createCard();*/
+});
+
 
 module.exports = router;
