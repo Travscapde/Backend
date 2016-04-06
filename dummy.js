@@ -38,53 +38,67 @@ method.getCards = function() {
     */
 
     var json1 = {
-        "description": "Chilling",
         "user-name": "Joy",
         "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/user1.jpg",
         "card-type": "image",
-        "link": "https://s3-ap-southeast-1.amazonaws.com/travnet/1.jpg",
         "likes": "213",
-        "location": "Bali, Indonesia"
+        "location": "Bali, Indonesia",
+        "content": {
+            "url": "https://s3-ap-southeast-1.amazonaws.com/travnet/1.jpg",
+            "description": "Chilling"
+        }
     };
 
     var json2 = {
-        "description": "Chiling",
         "user-name": "Joy",
         "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/user1.jpg",
         "card-type": "image",
-        "link": "https://s3-ap-southeast-1.amazonaws.com/travnet/2.jpg",
         "likes": "35",
-        "location": "Maldives"
+        "location": "Maldives",
+        "content": {
+            "url": "https://s3-ap-southeast-1.amazonaws.com/travnet/2.jpg",
+            "description": "Chilling"
+        }
     };
 
     var json3 = {
-        "description": "Chiling",
-        "user-name": "Joy",
-        "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/user1.jpg",
-        "card-type": "image",
-        "link": "https://s3-ap-southeast-1.amazonaws.com/travnet/3.jpg",
+        "user-name": "The Blonde Abroad",
+        "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/blogger1.jpg",
+        "card-type": "blog",
         "likes": "56",
-        "location": "Argentina"
+        "location": "General",
+        "content": {
+            "url": "http://theblondeabroad.com/2014/10/12/20-trips-to-take-in-your-20s/",
+            "thumbnail": "https://s3-ap-southeast-1.amazonaws.com/travnet/blog1.jpg",
+            "title": "20 trips to take in your 20’s!",
+            "abstract": "While there’s no perfect age to get up and go, there is something special about hitting the road and experiencing some of the world’s most incredible adventures in your twenties. Go while you’re young, single and without too much responsibility."
+        }
     };
 
     var json4 = {
-        "description": "Chiling",
         "user-name": "Joy",
         "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/user1.jpg",
         "card-type": "image",
-        "link": "https://s3-ap-southeast-1.amazonaws.com/travnet/4.jpg",
         "likes": "64",
-        "location": "Arizona, United States"
+        "location": "Arizona, United States",
+        "content": {
+            "url": "https://s3-ap-southeast-1.amazonaws.com/travnet/4.jpg",
+            "description": "Chilling"
+        }
     };
 
     var json5 = {
-        "description": "Chiling",
-        "user-name": "Joy",
-        "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/user1.jpg",
-        "card-type": "image",
-        "link": "https://s3-ap-southeast-1.amazonaws.com/travnet/5.jpg",
+        "user-name": "Adventurous Kate",
+        "user-img": "https://s3-ap-southeast-1.amazonaws.com/travnet/blogger2.jpg",
+        "card-type": "blog",
         "likes": "234",
-        "location": "Spain"
+        "location": "Bangkok, Thailand",
+        "content": {
+            "url": "http://www.adventurouskate.com/songkran-in-bangkok-the-greatest-festival-on-earth/",
+            "thumbnail": "https://s3-ap-southeast-1.amazonaws.com/travnet/blog2.jpg",
+            "title": "Songkran in Bangkok: The Greatest Festival on Earth",
+            "abstract": "Songkran in Bangkok is incredible — one of the absolute most fun events on the planet. For three days in April, people celebrate the new year by throwing water on each other, which quickly turns into a giant water fight in the streets."
+        }
     };
 
     var jsonArray = { "cards": [json1, json2, json3, json4, json5] };
