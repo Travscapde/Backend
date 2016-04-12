@@ -2,10 +2,11 @@ var express = require('express');
 var router = express.Router();
 var winston = require('winston');
 
-//var mongoose = require('mongoose');
-//var User = require('./models/user');
-var db_manager = require('./db-manager.js');
-var db = new db_manager();
+var mongoose = require('mongoose');
+var User = require('./models/user');
+
+//var db_manager = require('./db-manager.js');
+//var db = new db_manager();
 
 var dummy = require('./dummy.js');
 var dummyInstance = new dummy();
@@ -49,23 +50,27 @@ router.get("/getCards", function(req, res) {
 
 router.get("/add-user", function(req, res) {
 
-    //mongoose.connect('mongodb://localhost/myappdatabase');
+    mongoose.connect('mongodb://localhost/myappdatabase');
     // create a new user
-    /*var newUser = User({
+    var newUser = User({
         name: 'Peter Quill',
-        username: 'starlord55',
-       password: 'password',
+        username: 'starlord555',
+        password: 'password',
         admin: true
     });
+
+//handle duplicate users
+//send error if user already added  
+
     // save the user
     newUser.save(function(err) {
-        if (err) res.json({ 'message': 'Error creating User' });;
-
-        res.json({ 'message': 'Added User!' });
-        console.log('User created!');
+        if (err) {
+            res.json({ 'message': 'Error creating User' });
+        } else {
+            res.json({ 'message': 'Added User!' });
+            console.log('User created!');
+        }
     });
-
-    //db.createCard();*/
 });
 
 
