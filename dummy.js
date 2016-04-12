@@ -45,7 +45,8 @@ method.getCards = function() {
         "location": "Bali, Indonesia",
         "content": {
             "url": "https://s3-ap-southeast-1.amazonaws.com/travnet/1.jpg",
-            "description": "Chilling"
+            "description": "Chilling",
+            "activity": "Sightseeing"
         }
     };
 
@@ -57,7 +58,8 @@ method.getCards = function() {
         "location": "Maldives",
         "content": {
             "url": "https://s3-ap-southeast-1.amazonaws.com/travnet/2.jpg",
-            "description": "Chilling"
+            "description": "Chilling",
+            "activity": "Beach"
         }
     };
 
@@ -83,7 +85,8 @@ method.getCards = function() {
         "location": "Arizona, United States",
         "content": {
             "url": "https://s3-ap-southeast-1.amazonaws.com/travnet/4.jpg",
-            "description": "Chilling"
+            "description": "Chilling",
+            "activity": "Cave"
         }
     };
 
