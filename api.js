@@ -4,6 +4,8 @@ var winston = require('winston');
 
 var mongoose = require('mongoose');
 var User = require('./models/user');
+var UserInfo = require('./models/user_info');
+var Card = require('./models/card');
 
 //var db_manager = require('./db-manager.js');
 //var db = new db_manager();
@@ -26,51 +28,105 @@ router.use(function timeLog(req, res, next) {
 });
 
 // define the home page route
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     res.json({ 'message': 'Travent API home' });
 });
 
 // define the about route
-router.get('/about', function(req, res) {
+router.get('/about', function (req, res) {
     res.json({ 'message': 'Welcome to TravnetDiscover Backend!' });
 });
 
-router.get("/getImages", function(req, res) {
+router.get("/getImages", function (req, res) {
     res.json(dummyInstance.getImages());
 });
 
-router.get("/getImage", function(req, res) {
+router.get("/getImage", function (req, res) {
     res.json(dummyInstance.getImage());
 });
 
-router.get("/getCards", function(req, res) {
+router.get("/getCards", function (req, res) {
     res.json(dummyInstance.getCards());
 });
 
-
-router.get("/add-user", function(req, res) {
-
-    mongoose.connect('mongodb://localhost/myappdatabase');
-    // create a new user
-    var newUser = User({
-        name: 'Peter Quill',
-        username: 'starlord555',
-        password: 'password',
-        admin: true
+// assuming POST: name=foo&color=red            <-- URL encoding
+// or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
+router.post("/registerUser", function (req, res) {
+    var newUserInfo = UserInfo({
+        name: req.body.name,
+        email: req.body.email,
+        date_of_birth: req.body.age,
+        home: req.body.home,
+        living_in: req.body.living_in,
+        profile_pic: req.body.profile_pic,
+        facebook_id: req.body.facebook_id
     });
+    //res.json(newUserInfo._id);
 
-//handle duplicate users
-//send error if user already added  
-
-    // save the user
-    newUser.save(function(err) {
+    newUserInfo.save(function (err) {
         if (err) {
-            res.json({ 'message': 'Error creating User' });
+            res.json({ 'message': 'Error creating user, possibly duplicate' });
         } else {
-            res.json({ 'message': 'Added User!' });
-            console.log('User created!');
+            res.json(newUserInfo._id);
         }
     });
+});
+
+router.post("/registerInterests", function (req, res) {
+    var userId = req.body.user_id;
+    var interestList = req.body.interests;
+    /*UserInfo.findById(userId, function (err, userInfo) {
+        if (err) {
+            res.json({ "message": "user_id not found" })
+        } else {
+            //res.json(userInfo);
+            res.json(interestList);
+        }
+    });*/
+
+    UserInfo.findById(userId, function (err, searchedUser) {
+        if (!searchedUser)
+            res.json('user_id not found');
+        else {
+            searchedUser.updated_at = new Date();
+            searchedUser.interests = interestList;
+            searchedUser.save(function (err) {
+                if (err)
+                    res.json({ "message": "Error updating user interest" });
+                else
+                    res.json(interestList);
+            });
+        }
+    });
+});
+
+router.post("/registerCard", function (req, res) {
+    var newCard = Card({
+        card_type: req.body.card_type,
+        location: req.body.location,
+        user_info_id: req.body.user_id,
+        url: req.body.url,
+        thumbnail: req.body.thumbnail,
+        title: req.body.title,
+        interests: req.body.interests
+    });
+
+
+    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+        if (!searchedUser) {
+            res.json('user_id not found');
+            return 0;
+        } else {
+            newCard.save(function (err) {
+                if (err) {
+                    res.json({ err });
+                } else {
+                    res.json(newCard);
+                }
+            });
+        }
+    });
+
 });
 
 
