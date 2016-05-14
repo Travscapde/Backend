@@ -3,7 +3,6 @@ var router = express.Router();
 var winston = require('winston');
 
 var mongoose = require('mongoose');
-var User = require('./models/user');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
 
@@ -30,7 +29,7 @@ router.use(function timeLog(req, res, next) {
 // define the home page route
 router.get('/', function (req, res) {
     res.json({ 'message': 'Travent API home' });
-});
+}); 
 
 // define the about route
 router.get('/about', function (req, res) {
