@@ -52,7 +52,7 @@ router.get("/getInterests", function (req, res) {
     res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }] });
 });
 
-router.get("/getUserInfo", function (req, res) {
+router.post("/getUserInfo", function (req, res) {
     UserInfo.findById(req.body.user_id, function (err, searchedUser) {
         if (err) {
             res.json({ "message": "user not found" });
