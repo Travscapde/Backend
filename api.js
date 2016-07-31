@@ -49,7 +49,7 @@ router.get("/getCards", function (req, res) {
 });
 
 router.get("/getInterests", function (req, res) {
-    res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }]});
+    res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }] });
 });
 
 // assuming POST: name=foo&color=red            <-- URL encoding
@@ -65,12 +65,17 @@ router.post("/registerUser", function (req, res) {
         facebook_id: req.body.facebook_id
     });
     //res.json(newUserInfo._id);
-
-    newUserInfo.save(function (err) {
+    UserInfo.findOne({ 'email': emai }, function (err, searchedUser) {
         if (err) {
-            res.json({ 'message': 'Error creating user, possibly duplicate' });
+            newUserInfo.save(function (err) {
+                if (err) {
+                    res.json({ 'message': 'Error creating user, possibly duplicate' });
+                } else {
+                    res.json({ "user_id": newUserInfo._id });
+                }
+            });
         } else {
-            res.json({ "user_id": newUserInfo._id });
+            res.json({ "user_id": searchedUser._id });
         }
     });
 });
