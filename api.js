@@ -52,6 +52,16 @@ router.get("/getInterests", function (req, res) {
     res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }] });
 });
 
+router.get("/getUserInfo", function (req, res) {
+    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+        if (err) {
+            res.json({ "message": "user not found" });
+        } else {
+            res.json(searchedUser);
+        }
+    });
+});
+
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
 router.post("/registerUser", function (req, res) {
@@ -64,8 +74,8 @@ router.post("/registerUser", function (req, res) {
         profile_pic: req.body.profile_pic,
         facebook_id: req.body.facebook_id
     });
-    //res.json(newUserInfo._id);
-    UserInfo.findOne({ 'email': emai }, function (err, searchedUser) {
+
+    UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
         if (err) {
             newUserInfo.save(function (err) {
                 if (err) {
