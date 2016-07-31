@@ -29,7 +29,7 @@ router.use(function timeLog(req, res, next) {
 // define the home page route
 router.get('/', function (req, res) {
     res.json({ 'message': 'Travent API home' });
-}); 
+});
 
 // define the about route
 router.get('/about', function (req, res) {
@@ -66,7 +66,7 @@ router.post("/registerUser", function (req, res) {
         if (err) {
             res.json({ 'message': 'Error creating user, possibly duplicate' });
         } else {
-            res.json(newUserInfo._id);
+            res.json({ "user_id": newUserInfo._id });
         }
     });
 });
@@ -93,7 +93,7 @@ router.post("/registerInterests", function (req, res) {
                 if (err)
                     res.json({ "message": "Error updating user interest" });
                 else
-                    res.json(interestList);
+                    res.json({ "interests": interestList });
             });
         }
     });
@@ -113,12 +113,12 @@ router.post("/registerCard", function (req, res) {
 
     UserInfo.findById(req.body.user_id, function (err, searchedUser) {
         if (!searchedUser) {
-            res.json('user_id not found');
+            res.json({ 'message': 'user_id not found' });
             return 0;
         } else {
             newCard.save(function (err) {
                 if (err) {
-                    res.json({ err });
+                    res.json({ "message": err });
                 } else {
                     res.json(newCard);
                 }
