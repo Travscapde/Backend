@@ -48,6 +48,10 @@ router.get("/getCards", function (req, res) {
     res.json(dummyInstance.getCards());
 });
 
+router.get("/getInterests", function (req, res) {
+    res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }]});
+});
+
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
 router.post("/registerUser", function (req, res) {
