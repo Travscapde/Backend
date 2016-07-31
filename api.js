@@ -77,15 +77,19 @@ router.post("/registerUser", function (req, res) {
 
     UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
         if (err) {
-            newUserInfo.save(function (err) {
-                if (err) {
-                    res.json({ 'message': 'Error creating user, possibly duplicate' });
-                } else {
-                    res.json({ "user_id": newUserInfo._id });
-                }
-            });
+            res.json({ 'message': 'Error creating user' });
         } else {
-            res.json({ "user_id": searchedUser._id });
+            if (searchedUser) {
+                res.json({ "user_id": searchedUser._id });
+            } else {
+                newUserInfo.save(function (err) {
+                    if (err) {
+                        res.json({ 'message': 'Error creating user, possibly duplicate' });
+                    } else {
+                        res.json({ "user_id": newUserInfo._id });
+                    }
+                });
+            }
         }
     });
 });
