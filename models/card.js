@@ -6,7 +6,7 @@ var Schema = mongoose.Schema;
 var cardSchema = new Schema({
     id: { type: Schema.Types.ObjectId, default: mongoose.Types.ObjectId() },
     card_type: { type: String, required: true },
-    likes: { type: Number, default: 0 },
+    likes: [Schema.Types.ObjectId],
     location: String,
     created_at: Date,
     updated_at: Date,

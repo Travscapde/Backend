@@ -75,18 +75,15 @@ router.post("/getUserPhotoCount", function (req, res) {
 });
 
 router.post("/likeCard", function (req, res) {
-    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
-        if (err) {
-            res.json({ "message": "user not found" });
-        } else {
-            //found user
-            var count = searchedUser.photo_count;
-            res.json({ "count": count });
+    Card.findByIdAndUpdate(
+        req.card_id,
+        { $push: { "likes": req.user_id } },
+        { safe: true, upsert: true },
+        function (err, model) {
+            res.json({ "message": err });
         }
-    });
+    );
 });
-
-
 
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
