@@ -19,7 +19,7 @@ var cardSchema = new Schema({
 });
 
 cardSchema.methods.like = function () {
-    this.likes = this.name + 1;
+    this.likes = this.likes + 1;
 };
 
 cardSchema.pre('save', function (next) {

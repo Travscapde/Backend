@@ -12,7 +12,8 @@ var userInfoSchema = new Schema({
     facebook_id: String,
     created_at: Date,
     updated_at: Date,
-    interests: [String] 
+    interests: [String],
+    photo_count: { type: Number, default: 0 }
 });
 
 userInfoSchema.methods.dudify = function () {
@@ -27,6 +28,10 @@ userInfoSchema.pre('save', function (next) {
 
     next();
 });
+
+userInfoSchema.methods.newPhotoUpload = function () {
+    this.photo_count = this.photo_count + 1;
+};
 
 var UserInfoSchema = mongoose.model('UserInfoSchema', userInfoSchema);
 module.exports = UserInfoSchema;

@@ -62,6 +62,20 @@ router.post("/getUserInfo", function (req, res) {
     });
 });
 
+router.post("/getUserPhotoCount", function (req, res) {
+    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+        if (err) {
+            res.json({ "message": "user not found" });
+        } else {
+            //found user
+            var count = searchedUser.photo_count;
+            res.json({ "count": count });
+        }
+    });
+});
+
+
+
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
 router.post("/registerUser", function (req, res) {
@@ -122,6 +136,8 @@ router.post("/registerInterests", function (req, res) {
     });
 });
 
+
+
 router.post("/registerCard", function (req, res) {
     var newCard = Card({
         card_type: req.body.card_type,
@@ -144,6 +160,7 @@ router.post("/registerCard", function (req, res) {
                     res.json({ "message": err });
                 } else {
                     res.json(newCard);
+                    searchedUser.newPhotoUpload();
                 }
             });
         }
