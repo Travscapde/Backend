@@ -75,14 +75,18 @@ router.post("/getUserPhotoCount", function (req, res) {
 });
 
 router.post("/likeCard", function (req, res) {
-    Card.findByIdAndUpdate(
-        req.card_id,
-        { $push: { "likes": req.user_id } },
-        { safe: true, upsert: true },
-        function (err, model) {
-            res.json({ "message": err });
+    Card.findById(req.body.card_id, function (err, searchedCard) {
+        if (!searchedCard) {
+            res.json({ 'message': 'card_id not found' });
+            return 0;
+        } else {
+            //check if user_id exists before adding
+            searchedCard.like_list.push(req.body.user_id);
+            searchedCard.likes = searchedCard.likes + 1;
+            searchedCard.save();
+            res.json(searchedCard);
         }
-    );
+    });
 });
 
 // assuming POST: name=foo&color=red            <-- URL encoding

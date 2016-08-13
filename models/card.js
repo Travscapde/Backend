@@ -4,9 +4,9 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var cardSchema = new Schema({
-    id: { type: Schema.Types.ObjectId, default: mongoose.Types.ObjectId() },
     card_type: { type: String, required: true },
-    likes: [Schema.Types.ObjectId],
+    like_list: [Schema.Types.ObjectId],
+    likes: { type: Number, default: 0 },
     location: String,
     created_at: Date,
     updated_at: Date,

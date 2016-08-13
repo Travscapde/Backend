@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var userInfoSchema = new Schema({
-    id: Schema.Types.ObjectId,
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     date_of_birth: Number,
