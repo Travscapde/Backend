@@ -45,7 +45,16 @@ router.get("/getImage", function (req, res) {
 });
 
 router.get("/getCards", function (req, res) {
-    res.json(dummyInstance.getCards());
+    Card.find({}, function (err, users) {
+        /*        var userMap = {};
+        
+                users.forEach(function (user) {
+                    userMap[user._id] = user;
+                });
+        */
+        res.json({ "cards": users });
+    });
+    //  res.json(dummyInstance.getCards());
 });
 
 router.get("/getInterests", function (req, res) {
