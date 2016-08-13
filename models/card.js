@@ -12,6 +12,9 @@ var cardSchema = new Schema({
     updated_at: Date,
 
     user_info_id: { type: mongoose.Schema.Types.ObjectId, ref: 'UserInfo', required: true },
+    user_profile_pic: String,
+    user_name: String,
+    user_home: String,
     url: String,
     thumbnail: String,
     title: String,

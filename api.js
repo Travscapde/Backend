@@ -175,6 +175,10 @@ router.post("/registerCard", function (req, res) {
             res.json({ 'message': 'user_id not found' });
             return 0;
         } else {
+            newCard.user_profile_pic = searchedUser.profile_pic;
+            newCard.user_home = searchedUser.home;
+            newCard.user_name = searchedUser.name;
+
             newCard.save(function (err) {
                 if (err) {
                     res.json({ "message": err });
@@ -188,6 +192,5 @@ router.post("/registerCard", function (req, res) {
     });
 
 });
-
 
 module.exports = router;
