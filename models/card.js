@@ -15,6 +15,7 @@ var cardSchema = new Schema({
     url: String,
     thumbnail: String,
     title: String,
+    description: String,
     interests: [String]
 });
 

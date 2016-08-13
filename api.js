@@ -54,7 +54,6 @@ router.get("/getCards", function (req, res) {
         */
         res.json({ "cards": users });
     });
-    //  res.json(dummyInstance.getCards());
 });
 
 router.get("/getInterests", function (req, res) {
@@ -166,6 +165,7 @@ router.post("/registerCard", function (req, res) {
         url: req.body.url,
         thumbnail: req.body.thumbnail,
         title: req.body.title,
+        description: req.body.description,
         interests: req.body.interests
     });
 
