@@ -19,7 +19,10 @@ var cardSchema = new Schema({
     thumbnail: String,
     title: String,
     description: String,
-    interests: [String]
+    interests: [String],
+
+    bucket_users: [Schema.Types.ObjectId],
+    bucket_count: { type: Number, default: 0 }
 });
 
 cardSchema.methods.like = function () {

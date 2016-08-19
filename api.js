@@ -102,6 +102,40 @@ router.post("/likeCard", function (req, res) {
     });
 });
 
+router.post("/addToBucket", function (req, res) {
+    Card.findById(req.body.card_id, function (err, searchedCard) {
+        if (!searchedCard) {
+            res.json({ 'message': 'card_id not found' });
+            return 0;
+        } else {
+            UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+                if (!searchedUser)
+                    res.json('user_id not found');
+                else {
+                    searchedUser.bucket_list.push(req.body.card_id);
+                    searchedCard.bucket_users.push(req.body.user_id);
+                    searchedCard.bucket_count = searchedCard.likes + 1;
+                    searchedCard.save();
+                    res.json(searchedCard);
+                }
+            });
+        }
+    });
+});
+
+router.post("/getUserPhotos", function (req, res) {
+    var id = mongoose.Types.ObjectId(req.body.user_id);
+
+    Card.find({ "user_info_id": id }, function (err, cards) {
+        if (err) return res(err);
+        if (cards) {
+            res.json({ "cards": cards });
+        } else {
+            res.send({ 'message': 'no user cards found' });
+        }
+    });
+});
+
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
 router.post("/registerUser", function (req, res) {

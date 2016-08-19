@@ -12,7 +12,8 @@ var userInfoSchema = new Schema({
     created_at: Date,
     updated_at: Date,
     interests: [String],
-    photo_count: { type: Number, default: 0 }
+    photo_count: { type: Number, default: 0 },
+    bucket_list: [Schema.Types.ObjectId]
 });
 
 userInfoSchema.methods.dudify = function () {
