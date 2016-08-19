@@ -114,7 +114,7 @@ router.post("/addToBucket", function (req, res) {
                 else {
                     searchedUser.bucket_list.push(req.body.card_id);
                     searchedCard.bucket_users.push(req.body.user_id);
-                    searchedCard.bucket_count = searchedCard.likes + 1;
+                    searchedCard.bucket_count = searchedCard.bucket_count + 1;
                     searchedCard.save();
                     res.json(searchedCard);
                 }
