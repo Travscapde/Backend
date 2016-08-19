@@ -56,6 +56,11 @@ router.get("/getCards", function (req, res) {
     });
 });
 
+router.get("/getSecretKey", function (req, res) {
+    var file = __dirname + '/aws.json';
+    res.sendFile(file);
+});
+
 router.get("/getInterests", function (req, res) {
     res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }] });
 });
@@ -132,14 +137,6 @@ router.post("/registerUser", function (req, res) {
 router.post("/registerInterests", function (req, res) {
     var userId = req.body.user_id;
     var interestList = req.body.interests;
-    /*UserInfo.findById(userId, function (err, userInfo) {
-        if (err) {
-            res.json({ "message": "user_id not found" })
-        } else {
-            //res.json(userInfo);
-            res.json(interestList);
-        }
-    });*/
 
     UserInfo.findById(userId, function (err, searchedUser) {
         if (!searchedUser)
