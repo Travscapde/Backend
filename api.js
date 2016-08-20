@@ -123,7 +123,7 @@ router.post("/addToBucket", function (req, res) {
     });
 });
 
-router.post("/getUserPhotos", function (req, res) {
+router.post("/getUserCards", function (req, res) {
     var id = mongoose.Types.ObjectId(req.body.user_id);
 
     Card.find({ "user_info_id": id }, function (err, cards) {
