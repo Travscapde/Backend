@@ -116,6 +116,7 @@ router.post("/addToBucket", function (req, res) {
                     searchedCard.bucket_users.push(req.body.user_id);
                     searchedCard.bucket_count = searchedCard.bucket_count + 1;
                     searchedCard.save();
+                    searchedUser.save();
                     res.json(searchedCard);
                 }
             });
