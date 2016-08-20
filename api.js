@@ -214,8 +214,10 @@ router.post("/registerCard", function (req, res) {
                 if (err) {
                     res.json({ "message": err });
                 } else {
-                    searchedUser.photo_count = searchedUser.photo_count + 1;
-                    searchedUser.save();
+                    if (card_type == "photo") {
+                        searchedUser.photo_count = searchedUser.photo_count + 1;
+                        searchedUser.save();
+                    }
                     res.json(newCard);
                 }
             });
