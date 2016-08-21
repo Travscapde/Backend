@@ -215,6 +215,7 @@ router.post("/registerCard", function (req, res) {
     var newCard = Card({
         card_type: req.body.card_type,
         location: req.body.location,
+        location_id: req.body.location_id,
         user_info_id: req.body.user_id,
         url: req.body.url,
         thumbnail: req.body.thumbnail,
@@ -237,7 +238,7 @@ router.post("/registerCard", function (req, res) {
                 if (err) {
                     res.json({ "message": err });
                 } else {
-                    if (card_type == "photo") {
+                    if (req.body.card_type == "photo") {
                         searchedUser.photo_count = searchedUser.photo_count + 1;
                         searchedUser.save();
                     }

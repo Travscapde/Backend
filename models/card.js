@@ -8,6 +8,7 @@ var cardSchema = new Schema({
     like_list: [Schema.Types.ObjectId],
     likes: { type: Number, default: 0 },
     location: String,
+    location_id: String,
     created_at: Date,
     updated_at: Date,
 
