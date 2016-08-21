@@ -108,7 +108,7 @@ router.post("/addToBucket", function (req, res) {
             res.json({ 'message': 'card_id not found' });
             return 0;
         } else {
-            UserInfo.find; ById(req.body.user_id, function (err, searchedUser) {
+            UserInfo.findById(req.body.user_id, function (err, searchedUser) {
                 if (!searchedUser)
                     res.json('user_id not found');
                 else {
