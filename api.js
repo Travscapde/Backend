@@ -62,7 +62,32 @@ router.get("/getSecretKey", function (req, res) {
 });
 
 router.get("/getInterests", function (req, res) {
-    res.json({ "interests": [{ "interest": "Surfing" }, { "interest": "Diving" }, { "interest": "Biking" }, { "interest": "Yoga" }, { "interest": "Sight-seeing" }] });
+
+    res.json({
+        "interests": [
+            { "interest": "Sightseeing" },
+            { "interest": "Hiking" },
+            { "interest": "Trekking" },
+            { "interest": "Snorkelling" },
+            { "interest": "Surfing" },
+            { "interest": "Diving" },
+            { "interest": "Driving" },
+            { "interest": "Relaxing" },
+            { "interest": "Road Trip" },
+            { "interest": "Cruise" },
+            { "interest": "Kayaking" },
+            { "interest": "Fishing" },
+            { "interest": "Massage" },
+            { "interest": "Caving" },
+            { "interest": "Skiing" },
+            { "interest": "Snowboarding" },
+            { "interest": "Thrill" },
+            { "interest": "bird eye view" },
+            { "interest": "Cycling" },
+            { "interest": "Water Sports" },
+            { "interest": "Safari" },
+            { "interest": "Cable car" }]
+    });
 });
 
 router.post("/getUserInfo", function (req, res) {
