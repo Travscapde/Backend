@@ -124,24 +124,20 @@ router.post("/addToBucket", function (req, res) {
     });
 });
 
-router.post("/getUserBucket", function (req, res) {
+router.post("/getBucketList", function (req, res) {
     UserInfo.findById(req.body.user_id, function (err, searchedUser) {
         if (!searchedUser) {
             res.json({ 'message': 'user_id not found' });
             return 0;
         } else {
             var cards = searchedUser.bucket_list;
-            var bucket_cards = [];
-            if (cards) {
-                cards.forEach(function (card_id) {
-                    Card.findById(card_id, function (err, searchedCard) {
-                        if (searchedCard) {
-                            bucket_cards.push(searchedCard);
-                        }
-                    });
-                });
-            }
-            res.json({ "bucket_list": bucket_cards });
+            var cardObjectIds = [];
+            cards.forEach(function (card_id) {
+                cardObjectIds.push(mongoose.Types.ObjectId(card_id));
+            });
+            Card.find({ '_id': { $in: cardObjectIds } }, function (err, bucket_cards) {
+                res.send({ "bucket_list": bucket_cards });
+            });
         }
     });
 });
