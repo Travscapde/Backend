@@ -52,6 +52,7 @@ router.get("/getCards", function (req, res) {
                     userMap[user._id] = user;
                 });
         */
+        users.reverse();
         res.json({ "cards": users });
     });
 });
