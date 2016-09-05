@@ -45,15 +45,8 @@ router.get("/getImage", function (req, res) {
 });
 
 router.get("/getCards", function (req, res) {
-    Card.find({}, function (err, users) {
-        /*        var userMap = {};
-        
-                users.forEach(function (user) {
-                    userMap[user._id] = user;
-                });
-        */
-        users.reverse();
-        res.json({ "cards": users });
+    Card.find({}).sort({ created_at: 'desc' }).exec(function (err, cards) {
+        res.json({ "cards": cards });
     });
 });
 
@@ -66,41 +59,41 @@ router.get("/getInterests", function (req, res) {
 
     res.json({
         "interests": [
-            { "interest": "Sightseeing" },
-            { "interest": "Hiking" },
-            { "interest": "Trekking" },
-            { "interest": "Snorkelling" },
-            { "interest": "Surfing" },
-            { "interest": "Diving" },
-            { "interest": "Boat Ride" },
-            { "interest": "Yoga" },
-            { "interest": "Road Trip" },
-            { "interest": "Cruise" },
-            { "interest": "Kayaking" },
-            { "interest": "Fishing" },
-            { "interest": "Massage" },
-            { "interest": "Caving" },
-            { "interest": "Winter Sports" },
-            { "interest": "Thrill" },
             { "interest": "Aerial view" },
-            { "interest": "Cycling" },
+            { "interest": "Architecture" },
             { "interest": "Biking" },
-            { "interest": "Water Sports" },
-            { "interest": "Wildlife" },
-            { "interest": "Sailing" },
+            { "interest": "Boat Ride" },
+            { "interest": "Hiking" },
+            { "interest": "Diving" },
             { "interest": "Camping" },
-            { "interest": "Train Ride" },
-            { "interest": "Party" },
-            { "interest": "Festival" },
-            { "interest": "Foodie" },
+            { "interest": "Caving" },
+            { "interest": "Cruise" },
+            { "interest": "Cycling" },
             { "interest": "Desert" },
-            { "interest": "Mountain" },
-            { "interest": "Sea Beach" },
+            { "interest": "Festival" },
+            { "interest": "Fishing" },
+            { "interest": "Foodie" },
             { "interest": "Heritage" },
-            { "interest": "Waterfall" },
+            { "interest": "Kayaking" },
             { "interest": "Lake" },
             { "interest": "Landscape" },
-            { "interest": "Architecture" },
+            { "interest": "Massage" },
+            { "interest": "Mountain" },
+            { "interest": "Party" },
+            { "interest": "Road Trip" },
+            { "interest": "Sailing" },
+            { "interest": "Sailing" },
+            { "interest": "Sea Beach" },
+            { "interest": "Snorkelling" },
+            { "interest": "Surfing" },
+            { "interest": "Thrill" },
+            { "interest": "Train Ride" },
+            { "interest": "Trekking" },
+            { "interest": "Winter Sports" },
+            { "interest": "Water Sports" },
+            { "interest": "Waterfall" },
+            { "interest": "Wildlife" },
+            { "interest": "Yoga" },
             { "interest": "Others" }]
     });
 });
