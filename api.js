@@ -5,6 +5,7 @@ var winston = require('winston');
 var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
+var fs = require('fs');
 
 //var db_manager = require('./db-manager.js');
 //var db = new db_manager();
@@ -217,6 +218,17 @@ router.post("/registerUser", function (req, res) {
                 });
             }
         }
+    });
+});
+
+router.post("/subscribe", function (req, res) {
+    var email = req.body.email;
+    fs.appendFile('subscribers.txt', email + '\n', function (err) {
+
+        if (!err)
+            res.json({ 'message': email });
+        else
+            res.json({ 'message': 'Error adding subscriber' });
     });
 });
 
