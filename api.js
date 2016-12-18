@@ -5,6 +5,7 @@ var winston = require('winston');
 var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
+var ranker = require('./ranker');
 var fs = require('fs');
 
 //var db_manager = require('./db-manager.js');
@@ -45,11 +46,34 @@ router.get("/getImage", function (req, res) {
     res.json(dummyInstance.getImage());
 });
 
+
+
 router.get("/getCards", function (req, res) {
-    Card.find({}).sort({ created_at: 'desc' }).exec(function (err, cards) {
-        res.json({ "cards": cards });
-    });
+    
+    Card.find(function (err, cards) {
+        if (err) {
+            console.log(err);
+            res.json({ "message": "unable to fetch cards" });
+        } else {
+            if (typeof req.query.user_id == 'undefined') {
+                res.json({ "cards": cards });        
+            } else {    
+                UserInfo.find({"_id" : req.query.user_id}, function(err, users) {
+                    if (err) {
+                        console.log(err);
+                        res.json({ "message": "unable to fetch user" });
+                    } else {
+                        var sortedCards = ranker(cards, users[0], req.query.location);
+                        res.json({ "cards": sortedCards });        
+                    } 
+
+                });
+            }
+            
+        }
+    })
 });
+
 
 router.get("/getSecretKey", function (req, res) {
     var file = __dirname + '/aws.json';
@@ -223,12 +247,15 @@ router.post("/registerUser", function (req, res) {
 
 router.post("/subscribe", function (req, res) {
     var email = req.body.email;
-    fs.appendFile('subscribers.txt', email + '\n', function (err) {
+    fs.appendFile('subscribers.txt', email + ' ', function (err) {
 
-        if (!err)
+        if (!err){
             res.json({ 'message': email });
-        else
+        }
+        else {
+            console.log(err);
             res.json({ 'message': 'Error adding subscriber' });
+        }
     });
 });
 
