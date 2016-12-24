@@ -175,14 +175,14 @@ router.post("/likeCard", function (req, res) {
                     res.json({ 'message': 'card_id not found' });
                     return 0;
                 } else {
-                    console.log(searchedCard.likes);
+                    //console.log(searchedCard.likes);
                     searchedCard.likes = searchedCard.likes + 1;
-                    console.log(searchedCard.likes);
-                    //searchedCard.save();
-                    console.log(searchedUser.like_list.length);
+                    //console.log(searchedCard.likes);
+                    searchedCard.save();
+                    //console.log(searchedUser.like_list.length);
                     searchedUser.like_list.push(req.body.card_id);
-                    console.log(searchedUser.like_list.length);
-                    //searchedUser.save();
+                    //console.log(searchedUser.like_list.length);
+                    searchedUser.save();
                     res.json(searchedCard);
                 }
             });
