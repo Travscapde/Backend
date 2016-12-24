@@ -5,7 +5,7 @@ var winston = require('winston');
 var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
-var CardFunctions = require('./CardFunctions');
+var CardFunctions = require('./CardFunctions.js');
 var fs = require('fs');
 
 //var db_manager = require('./db-manager.js');
