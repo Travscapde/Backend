@@ -48,22 +48,22 @@ router.get("/getImage", function (req, res) {
 
 
 
-router.get("/getCards", function (req, res) {
+router.post("/getCards", function (req, res) {
     
     Card.find().lean().exec(function (err, cards) {
         if (err) {
             console.log(err);
             res.json({ "message": "unable to fetch cards" });
         } else {
-            if (typeof req.query.user_id == 'undefined') {
+            if (typeof req.body.user_id == 'undefined') {
                 res.json({ "cards": cards });        
             } else {    
-                UserInfo.find({"_id" : req.query.user_id}, function(err, users) {
+                UserInfo.find({"_id" : req.body.user_id}, function(err, users) {
                     if (err) {
                         console.log(err);
                         res.json({ "message": "unable to fetch user" });
                     } else {
-                        var sortedCards = CardFunctions.ranker(cards, users[0], req.query.location);
+                        var sortedCards = CardFunctions.ranker(cards, users[0], req.body.location);
                         //console.log(sortedCards.length);
                         var finalCards = CardFunctions.addInfo(sortedCards, users[0]);
                         res.json({ "cards": finalCards });        
