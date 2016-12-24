@@ -5,7 +5,7 @@ var winston = require('winston');
 var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
-var ranker = require('./ranker');
+var CardFunctions = require('./CardFunctions');
 var fs = require('fs');
 
 //var db_manager = require('./db-manager.js');
@@ -50,7 +50,7 @@ router.get("/getImage", function (req, res) {
 
 router.get("/getCards", function (req, res) {
     
-    Card.find(function (err, cards) {
+    Card.find().lean().exec(function (err, cards) {
         if (err) {
             console.log(err);
             res.json({ "message": "unable to fetch cards" });
@@ -63,8 +63,10 @@ router.get("/getCards", function (req, res) {
                         console.log(err);
                         res.json({ "message": "unable to fetch user" });
                     } else {
-                        var sortedCards = ranker(cards, users[0], req.query.location);
-                        res.json({ "cards": sortedCards });        
+                        var sortedCards = CardFunctions.ranker(cards, users[0], req.query.location);
+                        //console.log(sortedCards.length);
+                        var finalCards = CardFunctions.addInfo(sortedCards, users[0]);
+                        res.json({ "cards": finalCards });        
                     } 
 
                 });
@@ -145,7 +147,7 @@ router.post("/getUserPhotoCount", function (req, res) {
     });
 });
 
-router.post("/likeCard", function (req, res) {
+/*router.post("/likeCard", function (req, res) {
     Card.findById(req.body.card_id, function (err, searchedCard) {
         if (!searchedCard) {
             res.json({ 'message': 'card_id not found' });
@@ -158,7 +160,41 @@ router.post("/likeCard", function (req, res) {
             res.json(searchedCard);
         }
     });
+});*/
+
+
+router.post("/likeCard", function (req, res) {
+    console.log(req.body);
+    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+        if (!searchedUser) {
+            res.json({ 'message': 'user_id not found' });
+            return 0;
+        } else {
+            Card.findById(req.body.card_id, function (err, searchedCard) {
+                if (!searchedCard) {
+                    res.json({ 'message': 'card_id not found' });
+                    return 0;
+                } else {
+                    console.log(searchedCard.likes);
+                    searchedCard.likes = searchedCard.likes + 1;
+                    console.log(searchedCard.likes);
+                    //searchedCard.save();
+                    console.log(searchedUser.like_list.length);
+                    searchedUser.like_list.push(req.body.card_id);
+                    console.log(searchedUser.like_list.length);
+                    //searchedUser.save();
+                    res.json(searchedCard);
+                }
+            });
+
+            
+        }
+    });
+
+
 });
+
+
 
 router.post("/addToBucket", function (req, res) {
     Card.findById(req.body.card_id, function (err, searchedCard) {
