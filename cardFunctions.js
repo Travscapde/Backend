@@ -14,7 +14,7 @@ exports.ranker = function(cards, user, location) {
     var i;
     var seenCards = [];
     for (i=0;i<cards.length;i++){
-        var idx = user.bucket_list.indexOf(cards[i]._id);
+        var idx = user.seen_list.indexOf(cards[i]._id);
         if( idx > -1) {
             var seenCard = (cards.splice(i, 1))[0];
             seenCards.push(seenCard);    
@@ -59,10 +59,4 @@ exports.addInfo = function(cards, user) {
     return cards;
 }
 
-
-/*var testID = "57c78ee12bffa2af75e14cf1";
-    
-  */  
-
-//module.exports = ranker;
 
