@@ -48,6 +48,13 @@ router.get("/getImage", function (req, res) {
 
 
 
+router.get("/getCards", function (req, res) {
+    Card.find({}).sort({ created_at: 'desc' }).exec(function (err, cards) {
+        res.json({ "cards": cards });
+    });
+});
+
+
 router.post("/getCards", function (req, res) {
     
     Card.find().lean().exec(function (err, cards) {
