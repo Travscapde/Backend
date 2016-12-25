@@ -164,7 +164,7 @@ router.post("/getUserPhotoCount", function (req, res) {
 
 
 router.post("/likeCard", function (req, res) {
-    console.log(req.body);
+    //console.log(req.body);
     UserInfo.findById(req.body.user_id, function (err, searchedUser) {
         if (!searchedUser) {
             res.json({ 'message': 'user_id not found' });
@@ -193,6 +193,30 @@ router.post("/likeCard", function (req, res) {
 
 
 });
+
+
+
+
+router.post("/seenCard", function (req, res) {
+    //console.log(req.body);
+    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+        if (!searchedUser) {
+            res.json({ 'message': 'user_id not found' });
+            return 0;
+        } else {
+            if (searchedUser.seen_list.indexOf(req.body.card_id) > -1) {
+                //console.log("duplicate");
+            } else {
+                searchedUser.seen_list.push(req.body.card_id);
+                searchedUser.save();
+            }
+            res.json(searchedUser);
+        }
+    });
+
+
+});
+
 
 
 
