@@ -72,8 +72,10 @@ router.post("/getCards", function (req, res) {
                     } else {
                         var sortedCards = CardFunctions.ranker(cards, users[0], req.body.location);
                         //console.log(sortedCards.length);
-                        var finalCards = CardFunctions.addInfo(sortedCards, users[0]);
-                        res.json({ "cards": finalCards });        
+                        CardFunctions.addInfo(sortedCards, users[0], function(finalCards) {
+                            res.json({ "cards": finalCards });
+                        });
+                                
                     } 
 
                 });
