@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
 var CardFunctions = require('./cardFunctions.js');
+var gatherLocationInfo = require('./gatherLocationInfo.js');
 var fs = require('fs');
 
 //var db_manager = require('./db-manager.js');
@@ -371,10 +372,13 @@ router.post("/registerCard", function (req, res) {
             newCard.user_home = searchedUser.home;
             newCard.user_name = searchedUser.name;
 
-            newCard.save(function (err) {
+            newCard.save(function (err, savedCard) {
                 if (err) {
                     res.json({ "message": err });
                 } else {
+                    gatherLocationInfo(savedCard._id, savedCard.title, savedCard.location, function(){
+                        
+                    });
                     if (req.body.card_type == "photo") {
                         searchedUser.photo_count = searchedUser.photo_count + 1;
                         searchedUser.save();
