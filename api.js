@@ -376,8 +376,8 @@ router.post("/registerCard", function (req, res) {
                 if (err) {
                     res.json({ "message": err });
                 } else {
-                    gatherLocationInfo(savedCard._id, savedCard.title, savedCard.location, function(){
-                        
+                    gatherLocationInfo(savedCard._id, savedCard.title, savedCard.location.split(',')[0], function(location, extract){
+                        console.log(location + " : " + extract);
                     });
                     if (req.body.card_type == "photo") {
                         searchedUser.photo_count = searchedUser.photo_count + 1;

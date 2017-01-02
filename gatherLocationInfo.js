@@ -86,6 +86,10 @@ function getWikiTravelInfo(title, callback) {
 
 
 function getPageAbstract(title, callback) {
+	if (!title || title == ""){
+		callback("Page Not Found", "");
+		return;
+	}
 
 	var wikitravelQueryUrl = 'http://en.wikivoyage.org/w/api.php?action=query&prop=extracts&exintro=&explaintext=&format=json&titles=' + title;
 	//console.log(wikitravelQueryUrl);
@@ -121,7 +125,12 @@ function getPageAbstract(title, callback) {
 
 function toTitleCase(str)
 {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+	if(str) {
+    	return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+	} else {
+		return null;
+	}
+
 }
 
 
