@@ -64,6 +64,7 @@ router.post("/getCards", function (req, res) {
             res.json({ "message": "unable to fetch cards" });
         } else {
             if (typeof req.body.user_id == 'undefined') {
+                console.log("No User ID");
                 res.json({ "cards": cards });        
             } else {    
                 UserInfo.find({"_id" : req.body.user_id}, function(err, users) {
@@ -354,6 +355,8 @@ router.post("/registerCard", function (req, res) {
         card_type: req.body.card_type,
         location: req.body.location,
         location_id: req.body.location_id,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
         user_info_id: req.body.user_id,
         url: req.body.url,
         thumbnail: req.body.thumbnail,
@@ -362,6 +365,7 @@ router.post("/registerCard", function (req, res) {
         interests: req.body.interests
     });
 
+    //console.log(req.body.latitude + ", " + req.body.longitude);
 
     UserInfo.findById(req.body.user_id, function (err, searchedUser) {
         if (!searchedUser) {

@@ -63,6 +63,7 @@ exports.addInfo = function(cards, user, callback) {
                     cards[i].is_bucket_listed = false;
                 }       
 
+
                 //Adding location info
                 if(cards[i].location_info_id) {
                     var locationInfo = location_info_array.filter(function(value){return value._id==cards[i].location_info_id.toString();})[0];

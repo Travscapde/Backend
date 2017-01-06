@@ -1,5 +1,6 @@
 // grab the things we need
 var mongoose = require('mongoose');
+require('mongoose-double')(mongoose);
 var Schema = mongoose.Schema;
 
 // create a schema
@@ -9,6 +10,8 @@ var cardSchema = new Schema({
     likes: { type: Number, default: 0 },
     location: String,
     location_id: String,
+    latitude: {type: mongoose.Schema.Types.Double},
+    longitude: {type: mongoose.Schema.Types.Double},
     location_info_id: Schema.Types.ObjectId,
     created_at: Date,
     updated_at: Date,
