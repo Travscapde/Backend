@@ -96,8 +96,8 @@ exports.addInfo = function(cards, user, latitude, longitude, callback) {
 
                 if (latitude!=500 && longitude!=500) {
                     var dist = parseInt(getDistanceFromLatLonInKm(latitude, longitude, cards[i].latitude, cards[i].longitude));
-                    var roundedDist;
                     
+                    /*var roundedDist;
                     if (dist < 100)
                         roundedDist = Math.round(dist / 10) * 10;
                     else if (dist < 500)
@@ -107,11 +107,11 @@ exports.addInfo = function(cards, user, latitude, longitude, callback) {
                     else if (dist < 5000)
                         roundedDist = Math.round(dist / 500) * 500;
                     else 
-                        roundedDist = Math.round(dist / 1000) * 1000;
+                        roundedDist = Math.round(dist / 1000) * 1000;*/
 
                     //console.log(roundedDist);
                     
-                    cards[i].distance = roundedDist; 
+                    cards[i].distance = dist; 
                     //console.log(latitude + " " + longitude + " " + cards[i].latitude + " " + cards[i].longitude + " " + cards[i].distance);
     
                 }
