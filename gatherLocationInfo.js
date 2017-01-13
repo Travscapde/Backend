@@ -7,29 +7,27 @@ var LocationInfo = require('./models/location_info');
 function gatherLocationInfo (cardID, title, location, callback) {
 	
 
-	getWikiTravelInfo(title, function(err, extract) {
+	getWikiTravelInfo(title, function(err, extract, link) {
 		if (!err) {
-			saveLocationInfo(cardID, title, extract);
-			callback(title, extract);
+			saveLocationInfo(cardID, title, extract, link);
+			callback(title, extract, link);
 		} else if (err == "Page Not Found") {
-			getWikiTravelInfo(location, function(err, extract) {
+			getWikiTravelInfo(location, function(err, extract, link) {
 				if (!err) {
-					saveLocationInfo(cardID, location, extract);
-					callback(location, extract);
+					saveLocationInfo(cardID, location, extract, link);
+					callback(location, extract, link);
 				} else {
-					callback ("", "");		
+					callback ("", "", "");		
 				}
 			});
 		} 
 
 	}); 
 
-
-
 }
 
 
-function saveLocationInfo (cardID, location, extract) {
+function saveLocationInfo (cardID, location, extract, pageLink) {
 
 	//Check if location exists in database 
 	LocationInfo.findOne({name:location}, function(err, searchedlocation) {
@@ -49,7 +47,8 @@ function saveLocationInfo (cardID, location, extract) {
 			console.log("creating new location");
 			var newLocationInfo = LocationInfo({
 				name: location,
-				summary: extract
+				summary: extract,
+				link: pageLink
 		    });
 		    
 			newLocationInfo.save(function (err, location){
@@ -77,8 +76,9 @@ function getWikiTravelInfo(title, callback) {
 
 	title = toTitleCase(title);
 	
-	getPageAbstract(title, function(err, extract) {
-		callback(err, extract);
+	getPageAbstract(title, function(err, extract, pageID) {
+		var link = "https://en.wikivoyage.org/?curid=" + pageID;
+		callback(err, extract, link);
 	});
 
 }
@@ -87,7 +87,7 @@ function getWikiTravelInfo(title, callback) {
 
 function getPageAbstract(title, callback) {
 	if (!title || title == ""){
-		callback("Page Not Found", "");
+		callback("Page Not Found", "", -1);
 		return;
 	}
 
@@ -99,20 +99,20 @@ function getPageAbstract(title, callback) {
 		}, function (error, response, body) {
 			if (error) {
 				console.log(error);
-				callback(error, "");
+				callback(error, "", -1);
 			} else if (body.query == undefined) {
-				callback("Page Not Found", "");	
+				callback("Page Not Found", "", -1);	
 			} else {
 				var pageID = Object.keys(body.query.pages)[0];
 				if (pageID == '-1') {
-					callback("Page Not Found", "");
+					callback("Page Not Found", "", -1);
 				}
 				else {
 					var extract = body.query.pages[pageID].extract;
 					if(extract == "") {
-						callback("Page Not Found", "");		
+						callback("Page Not Found", "", -1);		
 					} else {
-						callback(null, extract);
+						callback(null, extract, pageID);
 					}								
 				}
 				

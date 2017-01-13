@@ -86,10 +86,12 @@ exports.addInfo = function(cards, user, latitude, longitude, callback) {
                     var locationInfo = location_info_array.filter(function(value){return value._id==cards[i].location_info_id.toString();})[0];
                     //console.log(locationInfo.name);   
                     cards[i].location_info_name = locationInfo.name;
-                    cards[i].location_info_summary = locationInfo.summary;   
+                    cards[i].location_info_summary = locationInfo.summary;
+                    cards[i].location_info_link = locationInfo.link;   
                 } else {
                     cards[i].location_info_name = "";
-                    cards[i].location_info_summary = "";   
+                    cards[i].location_info_summary = "";
+                    cards[i].location_info_link = "";      
                 }
 
                 if (latitude!=500 && longitude!=500) {
