@@ -57,6 +57,9 @@ router.get("/getCards", function (req, res) {
 
 
 router.post("/getCards", function (req, res) {
+    //console.log(req.body.latitude);
+    //console.log(req.body.longitude);
+    
     
     Card.find().lean().exec(function (err, cards) {
         if (err) {
@@ -74,7 +77,7 @@ router.post("/getCards", function (req, res) {
                     } else {
                         var sortedCards = CardFunctions.ranker(cards, users[0], req.body.location);
                         //console.log(sortedCards.length);
-                        CardFunctions.addInfo(sortedCards, users[0], function(finalCards) {
+                        CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, function(finalCards) {
                             res.json({ "cards": finalCards });
                         });
                                 

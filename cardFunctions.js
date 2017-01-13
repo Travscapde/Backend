@@ -36,9 +36,26 @@ function cardScore(card, user, location) {
 
 
 
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
+}
+
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
+}
 
 
-exports.addInfo = function(cards, user, callback) {
+
+exports.addInfo = function(cards, user, latitude, longitude, callback) {
 
     
     LocationInfo.find({}, function(err, location_info_array){
@@ -74,6 +91,30 @@ exports.addInfo = function(cards, user, callback) {
                     cards[i].location_info_name = "";
                     cards[i].location_info_summary = "";   
                 }
+
+                if (latitude!=500 && longitude!=500) {
+                    var dist = parseInt(getDistanceFromLatLonInKm(latitude, longitude, cards[i].latitude, cards[i].longitude));
+                    var roundedDist;
+                    
+                    if (dist < 100)
+                        roundedDist = Math.round(dist / 10) * 10;
+                    else if (dist < 500)
+                        roundedDist = Math.round(dist / 50) * 50;
+                    else if (dist < 1000)
+                        roundedDist = Math.round(dist / 100) * 100;
+                    else if (dist < 5000)
+                        roundedDist = Math.round(dist / 500) * 500;
+                    else 
+                        roundedDist = Math.round(dist / 1000) * 1000;
+
+                    //console.log(roundedDist);
+                    
+                    cards[i].distance = roundedDist; 
+                    //console.log(latitude + " " + longitude + " " + cards[i].latitude + " " + cards[i].longitude + " " + cards[i].distance);
+    
+                }
+
+
 
             }
             //console.log(cards);          
