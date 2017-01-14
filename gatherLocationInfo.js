@@ -11,7 +11,7 @@ function gatherLocationInfo (cardID, title, location, callback) {
 		if (!err) {
 			saveLocationInfo(cardID, title, extract, link);
 			callback(title, extract, link);
-		} else if (err == "Page Not Found") {
+		} else {
 			getWikiTravelInfo(location, function(err, extract, link) {
 				if (!err) {
 					saveLocationInfo(cardID, location, extract, link);
@@ -90,7 +90,7 @@ function getPageAbstract(title, callback) {
 		callback("Page Not Found", "", -1);
 		return;
 	}
-
+	console.log(title);
 	var wikitravelQueryUrl = 'http://en.wikivoyage.org/w/api.php?action=query&prop=extracts&exintro=&explaintext=&format=json&titles=' + title;
 	//console.log(wikitravelQueryUrl);
 		request({
