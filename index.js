@@ -6,7 +6,8 @@ var router = require('./api');
 var mongoose = require('mongoose');
 //mongoose.connect('mongodb://localhost/myappdatabase');
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://54.169.51.25:27017/mytestdatabase');
+var options = require("./dbOptions.json");
+mongoose.connect('mongodb://54.169.51.25:27017/mytestdatabase', options);
 
 //support posting
 var bodyParser = require('body-parser');
