@@ -7,6 +7,7 @@ var userInfoSchema = new Schema({
     date_of_birth: Number,
     home: String,
     living_in: String,
+    nationality: String,
     profile_pic: String,
     facebook_id: String,
     created_at: Date,

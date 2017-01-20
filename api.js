@@ -296,6 +296,7 @@ router.post("/registerUser", function (req, res) {
         date_of_birth: req.body.age,
         home: req.body.home,
         living_in: req.body.living_in,
+        citizenship: req.body.citizenship,
         profile_pic: req.body.profile_pic,
         facebook_id: req.body.facebook_id
     });
@@ -352,6 +353,28 @@ router.post("/registerInterests", function (req, res) {
         }
     });
 });
+
+
+router.post("/registerNationality", function (req, res) {
+    var userId = req.body.user_id;
+    var nationality = req.body.nationality;
+
+    UserInfo.findById(userId, function (err, searchedUser) {
+        if (!searchedUser)
+            res.json('user_id not found');
+        else {
+            searchedUser.updated_at = new Date();
+            searchedUser.nationality = nationality;
+            searchedUser.save(function (err) {
+                if (err)
+                    res.json({ "message": "Error updating user interest" });
+                else
+                    res.json({ "nationality": nationality });
+            });
+        }
+    });
+});
+
 
 router.post("/registerCard", function (req, res) {
     var newCard = Card({
