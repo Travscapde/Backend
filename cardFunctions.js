@@ -2,6 +2,7 @@ var Card = require('./models/card');
 var UserInfo = require('./models/user_info');
 var LocationInfo = require('./models/location_info');
 var VisaInfo = require('./models/visa_info');
+var WeatherInfo = require('./models/weather_info');
 
 exports.ranker = function(cards, user, location) {
 
@@ -52,6 +53,28 @@ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
 
 function deg2rad(deg) {
     return deg * (Math.PI/180)
+}
+
+
+function addScore (cards) {
+    return new Promise(function(resolve, reject) {
+        WeatherInfo.find({}, function(err, weather_info_array) {
+            if(err) {
+                reject(err)
+            } else {
+                var i;
+                for (i=0;i<cards.length;i++) {
+                    if(cards[i].location_score_id) {
+                        var weatherInfo = weather_info_array.filter(function(value){return value._id==cards[i].location_score_id.toString();})[0];
+                        cards[i].location_score = weatherInfo.score;
+                    }
+                    
+                } 
+
+                resolve();     
+            }
+        });        
+    });
 }
 
 
@@ -158,6 +181,7 @@ exports.addInfo = function(cards, user, latitude, longitude, callback) {
 
     Promise.all([
         addLocationInfo(cards,user,latitude,longitude),
+        addScore(cards),
         addVisaInfo(cards,user)
     ])
     .then(function() {

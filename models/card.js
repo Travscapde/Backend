@@ -13,6 +13,7 @@ var cardSchema = new Schema({
     latitude: {type: mongoose.Schema.Types.Double},
     longitude: {type: mongoose.Schema.Types.Double},
     location_info_id: Schema.Types.ObjectId,
+    location_score_id: Schema.Types.ObjectId,
     created_at: Date,
     updated_at: Date,
 

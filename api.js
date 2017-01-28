@@ -7,6 +7,7 @@ var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
 var CardFunctions = require('./cardFunctions.js');
 var gatherLocationInfo = require('./gatherLocationInfo.js');
+var getLocationScore = require('./gatherWeatherInfo.js');
 var fs = require('fs');
 
 //var db_manager = require('./db-manager.js');
@@ -409,6 +410,7 @@ router.post("/registerCard", function (req, res) {
                     gatherLocationInfo(savedCard._id, savedCard.title, savedCard.location.split(',')[0], function(location, extract){
                         console.log(location + " : " + extract);
                     });
+                    getLocationScore(savedCard);
                     if (req.body.card_type == "photo") {
                         searchedUser.photo_count = searchedUser.photo_count + 1;
                         searchedUser.save();
