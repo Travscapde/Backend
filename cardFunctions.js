@@ -4,6 +4,23 @@ var LocationInfo = require('./models/location_info');
 var VisaInfo = require('./models/visa_info');
 var WeatherInfo = require('./models/weather_info');
 
+
+
+
+
+
+
+
+exports.searchByLocation = function(cards, locationString) {
+    matchedCards = cards.filter(function(value){return (value.location.indexOf(locationString) > -1) });
+    return matchedCards;
+
+}
+
+
+
+
+
 exports.ranker = function(cards, user, location) {
 
     cards.sort(function (card1, card2) {

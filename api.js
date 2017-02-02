@@ -92,6 +92,45 @@ router.post("/getCards", function (req, res) {
 });
 
 
+
+
+
+router.post("/search", function (req, res) {
+    console.log(req.body.location.split(',')[0]);
+    
+    Card.find().lean().exec(function (err, cards) {
+        if (err) {
+            console.log(err);
+            res.json({ "message": "unable to fetch cards" });
+        } else {
+            if (typeof req.body.user_id == 'undefined') {
+                console.log("No User ID");
+                res.json({ "cards": cards });        
+            } else {    
+                UserInfo.find({"_id" : req.body.user_id}, function(err, users) {
+                    if (err) {
+                        console.log(err);
+                        res.json({ "message": "unable to fetch user" });
+                    } else {
+                        var searchedCards = CardFunctions.searchByLocation(cards, req.body.location.split(',')[0]);
+                        var sortedCards = CardFunctions.ranker(searchedCards, users[0], req.body.location);
+                        //console.log(sortedCards.length);
+                        CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, function(finalCards) {
+                            res.json({ "cards": finalCards });
+                        });
+                                
+                    } 
+
+                });
+            }
+        }
+    })
+});
+
+
+
+
+
 router.get("/getSecretKey", function (req, res) {
     var file = __dirname + '/aws.json';
     res.sendFile(file);
