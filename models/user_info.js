@@ -1,6 +1,11 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+var bucketListItem = new Schema({
+  name: String,
+  cards: [Schema.Types.ObjectId]
+});
+
 var userInfoSchema = new Schema({
     email: { type: String, required: true, unique: true },
     name: { type: String, required: true },
@@ -16,7 +21,7 @@ var userInfoSchema = new Schema({
     photo_count: { type: Number, default: 0 },
     seen_list: [Schema.Types.ObjectId],
     like_list: [Schema.Types.ObjectId],
-    bucket_list: [Schema.Types.ObjectId]
+    bucket_list: [bucketListItem]
 });
 
 userInfoSchema.methods.dudify = function () {

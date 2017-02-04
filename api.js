@@ -78,7 +78,7 @@ router.post("/getCards", function (req, res) {
                     } else {
                         var sortedCards = CardFunctions.ranker(cards, users[0], req.body.location);
                         //console.log(sortedCards.length);
-                        CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, function(finalCards) {
+                        CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, 0, function(finalCards, idx) {
                             res.json({ "cards": finalCards });
                         });
                                 
@@ -115,7 +115,7 @@ router.post("/search", function (req, res) {
                         var searchedCards = CardFunctions.searchByLocation(cards, req.body.location.split(',')[0]);
                         var sortedCards = CardFunctions.ranker(searchedCards, users[0], req.body.location);
                         //console.log(sortedCards.length);
-                        CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, function(finalCards) {
+                        CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, 0, function(finalCards, idx) {
                             res.json({ "cards": finalCards });
                         });
                                 
@@ -284,11 +284,32 @@ router.post("/addToBucket", function (req, res) {
                 if (!searchedUser)
                     res.json('user_id not found');
                 else {
-                    searchedUser.bucket_list.push(req.body.card_id);
+                    var locationList = searchedCard.location.split(',');
+                    var country = locationList[locationList.length-1].trim();
+                    var found = 0;
+
+                    for(var i=0;i<searchedUser.bucket_list.length;i++) {
+                        var bucketListItem = searchedUser.bucket_list[i];
+                        if (bucketListItem.name == country) {
+                            bucketListItem.cards.push(searchedCard._id);
+                            searchedUser.save();
+                            found = 1;
+                            break;
+                        }
+                    }
+
+                    if(found == 0) {
+                        searchedUser.bucket_list.push({name: country, cards: [searchedCard._id]});
+                        searchedUser.save();
+                    }
+
+
+
+                    //searchedUser.bucket_list.push(req.body.card_id);
                     searchedCard.bucket_users.push(req.body.user_id);
                     searchedCard.bucket_count = searchedCard.bucket_count + 1;
                     searchedCard.save();
-                    searchedUser.save();
+                    //searchedUser.save();
                     res.json(searchedCard);
                 }
             });
@@ -296,23 +317,92 @@ router.post("/addToBucket", function (req, res) {
     });
 });
 
+
+
+
 router.post("/getBucketList", function (req, res) {
-    UserInfo.findById(req.body.user_id, function (err, searchedUser) {
+      var options = {
+            path: 'bucket_list.cards',
+            model: 'Card'
+        };
+
+    UserInfo.findById(req.body.user_id).lean().populate(options).exec(function (err, populatedUser) {
+        if (!populatedUser) {
+            res.json({ 'message': 'user_id not found' });
+            return 0;
+        } else {
+            var count = 0;
+            for(var i=0;i<populatedUser.bucket_list.length;i++) {
+                populatedUser.bucket_list[i].cards.visa_info = "";
+                console.log((populatedUser.bucket_list[i].cards));
+                CardFunctions.addInfo(populatedUser.bucket_list[i].cards, populatedUser, 500, 500, i, function(updatedCards, idx) {
+                    //console.log(updatedCards);
+                    populatedUser.bucket_list[idx].cards = updatedCards;
+                    count++;
+                    if(count == populatedUser.bucket_list.length) {
+                        res.json({"bucket_list": populatedUser.bucket_list});
+
+                    }
+
+                    
+                });
+                        
+            }
+
+        }
+
+    });
+});
+
+
+
+
+/*router.post("/getBucketList", function (req, res) {
+    UserInfo.findById(req.body.user_id).lean().exec(function (err, searchedUser) {
         if (!searchedUser) {
             res.json({ 'message': 'user_id not found' });
             return 0;
         } else {
-            var cards = searchedUser.bucket_list;
-            var cardObjectIds = [];
-            cards.forEach(function (card_id) {
-                cardObjectIds.push(mongoose.Types.ObjectId(card_id));
-            });
-            Card.find({ '_id': { $in: cardObjectIds } }, function (err, bucket_cards) {
-                res.send({ "bucket_list": bucket_cards });
-            });
+            var options = {
+                path: 'bucket_list.cards',
+                model: 'Card'
+            };
+
+            UserInfo.populate(searchedUser, options, function(err, userDoc) {
+                if(err) {
+                    console.log(err);
+                } else {
+                    var populatedUser = userDoc.toObject();
+                    var count = 0;
+                    for(var i=0;i<populatedUser.bucket_list.length;i++) {
+                        populatedUser.bucket_list[i].cards.visa_info = "";
+                        console.log((populatedUser.bucket_list[i].cards));
+                        CardFunctions.addInfo(populatedUser.bucket_list[i].cards, searchedUser, 500, 500, i, function(updatedCards, idx) {
+                            //console.log(updatedCards);
+                            populatedUser.bucket_list[idx].cards = updatedCards;
+                            count++;
+                            if(count == populatedUser.bucket_list.length) {
+                                res.json({"bucket_list": populatedUser.bucket_list});
+
+                            }
+
+                            
+                        });
+                                
+                    }
+
+                }
+            })
+
+            
+
+
         }
     });
-});
+});*/
+
+
+
 
 router.post("/getUserCards", function (req, res) {
     var id = mongoose.Types.ObjectId(req.body.user_id);

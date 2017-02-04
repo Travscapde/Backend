@@ -175,8 +175,7 @@ function addVisaInfo (cards, user) {
 
 
 
-exports.addInfo = function(cards, user, latitude, longitude, callback) {
-
+exports.addInfo = function(cards, user, latitude, longitude, idx, callback) {
 
     var i;
     for (i=0;i<cards.length;i++) {
@@ -202,7 +201,7 @@ exports.addInfo = function(cards, user, latitude, longitude, callback) {
         addVisaInfo(cards,user)
     ])
     .then(function() {
-        callback(cards);
+        callback(cards, idx);
     })
     .catch(function(err) {
         console.log(err);
