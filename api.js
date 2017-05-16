@@ -9,7 +9,12 @@ var CardFunctions = require('./cardFunctions.js');
 var gatherLocationInfo = require('./gatherLocationInfo.js');
 var getLocationScore = require('./gatherWeatherInfo.js');
 var fs = require('fs');
-
+var http = require("http");
+var request = require('request');
+var imagesize = require('imagesize');
+//var jsdom = require("node-jsdom");
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
 //var db_manager = require('./db-manager.js');
 //var db = new db_manager();
 
@@ -48,6 +53,72 @@ router.get("/getImage", function (req, res) {
     res.json(dummyInstance.getImage());
 });
 
+
+
+router.post("/getLinkPreview", function (req, res) {
+    var link = req.body.link;
+    console.log(link);
+
+    request({uri: link}, function(err, response, body){
+        const dom = new JSDOM(body);
+        var preview = {
+            title: "",
+            extract: "",
+            image: ""
+        };
+        preview.title = dom.window.document.querySelector("title").textContent;
+        preview.extract = dom.window.document.querySelector("p").textContent;
+
+        console.log(dom.window.document.querySelector("title").textContent); 
+        console.log(dom.window.document.querySelector("p").textContent); 
+
+        var imgUrls = dom.window.document.querySelectorAll("img");     
+        getLargeImage(0);
+
+        function getLargeImage(idx) {
+            if (idx >= imgUrls.length) {
+                res.json(preview);
+                return;
+            }
+
+            imgUrl = imgUrls[idx].src;
+            var request = http.get(imgUrl, function (response) {
+                imagesize(response, function (err, result) {
+                    console.log(result);
+                    if(result.width > 500 && result.height > 300) {
+                        preview.image = imgUrl;
+                        res.json(preview);
+                    } else {
+                        getLargeImage(idx+1);
+                    }
+                    // we don't need more data
+                    request.abort();
+                });
+            });            
+        }
+
+        /*var request = http.get(imgUrl, function (response) {
+          imagesize(response, function (err, result) {
+            console.log(result);
+            // we don't need more data
+            request.abort();
+          });
+        });*/
+    });
+
+    /*jsdom.env(
+      "http://nodejs.org/dist/",
+      ["http://code.jquery.com/jquery.js"],
+      function (errors, window) {
+        console.log("there have been", window.$("a").length, "nodejs releases!");
+      }
+    );*/
+
+
+
+
+    
+});
 
 
 router.get("/getCards", function (req, res) {
