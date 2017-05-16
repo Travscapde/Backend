@@ -14,7 +14,7 @@ var request = require('request');
 var imagesize = require('imagesize');
 //var jsdom = require("node-jsdom");
 const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+const JSDOM = jsdom.JSDOM;
 //var db_manager = require('./db-manager.js');
 //var db = new db_manager();
 
