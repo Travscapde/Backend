@@ -507,7 +507,8 @@ router.post("/registerUser", function (req, res) {
             res.json({ 'message': 'Error creating user' });
         } else {
             if (searchedUser) {
-                res.json({ "user_id": searchedUser._id });
+                //res.json({'user': searchedUser});
+                res.json({"user": searchedUser, "user_id": searchedUser._id });
             } else {
                 newUserInfo.save(function (err) {
                     if (err) {
