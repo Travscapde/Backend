@@ -23,6 +23,8 @@ var cardSchema = new Schema({
     user_home: String,
     url: String,
     thumbnail: String,
+    picture_width: Number,
+    picture_height: Number,
     title: String,
     description: String,
     interests: [String],

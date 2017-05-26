@@ -578,6 +578,18 @@ router.post("/registerNationality", function (req, res) {
 });
 
 
+
+function getImageSize(imgUrl, callback) {
+    var request = http.get(imgUrl, function (response) {
+        imagesize(response, function (err, result) {
+            console.log(result);
+            request.abort();
+            callback(result.width, result.height);
+        });
+    });      
+}
+
+
 router.post("/registerCard", function (req, res) {
     var newCard = Card({
         card_type: req.body.card_type,
@@ -593,7 +605,13 @@ router.post("/registerCard", function (req, res) {
         interests: req.body.interests
     });
 
-    //console.log(req.body.latitude + ", " + req.body.longitude);
+    var imgUrl;
+    if(req.body.card_type == "photo") {
+        imgUrl = req.body.url;
+    } else {
+        imgUrl = req.body.thumbnail;
+    }
+
 
     UserInfo.findById(req.body.user_id, function (err, searchedUser) {
         if (!searchedUser) {
@@ -604,20 +622,25 @@ router.post("/registerCard", function (req, res) {
             newCard.user_home = searchedUser.home;
             newCard.user_name = searchedUser.name;
 
-            newCard.save(function (err, savedCard) {
-                if (err) {
-                    res.json({ "message": err });
-                } else {
-                    gatherLocationInfo(savedCard._id, savedCard.title, savedCard.location.split(',')[0], function(location, extract){
-                        console.log(location + " : " + extract);
-                    });
-                    getLocationScore(savedCard);
-                    if (req.body.card_type == "photo") {
-                        searchedUser.photo_count = searchedUser.photo_count + 1;
-                        searchedUser.save();
+            getImageSize(imgUrl, function(width, height) {
+                newCard.picture_width = width;
+                newCard.picture_height = height;
+                
+                newCard.save(function (err, savedCard) {
+                    if (err) {
+                        res.json({ "message": err });
+                    } else {
+                        gatherLocationInfo(savedCard._id, savedCard.title, savedCard.location.split(',')[0], function(location, extract){
+                            console.log(location + " : " + extract);
+                        });
+                        getLocationScore(savedCard);
+                        if (req.body.card_type == "photo") {
+                            searchedUser.photo_count = searchedUser.photo_count + 1;
+                            searchedUser.save();
+                        }
+                        res.json(newCard);
                     }
-                    res.json(newCard);
-                }
+                });
             });
         }
     });
