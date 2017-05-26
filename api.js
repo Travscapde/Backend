@@ -12,6 +12,7 @@ var fs = require('fs');
 var http = require("http");
 var request = require('request');
 var imagesize = require('imagesize');
+var requestImageSize  = require('request-image-size');
 //var jsdom = require("node-jsdom");
 const jsdom = require("jsdom");
 const JSDOM = jsdom.JSDOM;
@@ -579,7 +580,7 @@ router.post("/registerNationality", function (req, res) {
 
 
 
-function getImageSize(imgUrl, callback) {
+/*function getImageSize(imgUrl, callback) {
     var request = http.get(imgUrl, function (response) {
         imagesize(response, function (err, result) {
             console.log(result);
@@ -587,7 +588,7 @@ function getImageSize(imgUrl, callback) {
             callback(result.width, result.height);
         });
     });      
-}
+}*/
 
 
 router.post("/registerCard", function (req, res) {
@@ -622,9 +623,10 @@ router.post("/registerCard", function (req, res) {
             newCard.user_home = searchedUser.home;
             newCard.user_name = searchedUser.name;
 
-            getImageSize(imgUrl, function(width, height) {
-                newCard.picture_width = width;
-                newCard.picture_height = height;
+            //getImageSize(imgUrl, function(width, height) {
+            requestImageSize(imgUrl, function(err, size, downloaded) {
+                newCard.picture_width = size.width;
+                newCard.picture_height = size.height;
                 
                 newCard.save(function (err, savedCard) {
                     if (err) {
