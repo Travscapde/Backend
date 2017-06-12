@@ -5,6 +5,7 @@ var winston = require('winston');
 var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
+var SessionCards = require('./models/session_cards');
 var CardFunctions = require('./cardFunctions.js');
 var gatherLocationInfo = require('./gatherLocationInfo.js');
 var getLocationScore = require('./gatherWeatherInfo.js');
@@ -129,12 +130,88 @@ router.get("/getCards", function (req, res) {
 });
 
 
+
+
+function fetchCards(userID, location, latitude, longitude, callback) {
+    Card.find().lean().exec(function (err, cards) {
+        if (err) {
+            console.log(err);
+            callback({ "message": "unable to fetch cards" });
+        } else {        
+             
+            UserInfo.find({"_id" : userID}, function(err, users) {
+                if (err) {
+                    console.log(err);
+                    callback({ "message": "unable to fetch user" });
+                } else {
+                    var sortedCards = CardFunctions.ranker(cards, users[0], location);
+                    //console.log(sortedCards.length);
+                    CardFunctions.addInfo(sortedCards, users[0], latitude, longitude, 0, function(finalCards, idx) {
+                        callback({ "cards": finalCards });
+                    });
+                            
+                } 
+
+            });
+        
+            
+        }
+    })
+}
+
+
+
+
 router.post("/getCards", function (req, res) {
     //console.log(req.body.latitude);
     //console.log(req.body.longitude);
+
+    if(!('user_id' in req.body)) {
+        res.json({"message": "No User ID"})
+    }
+
+    //Existing session
+    if('start_idx' in req.body) {
+        if(parseInt(req.body.start_idx) == 0) {
+            fetchCards(req.body.user_id, null, req.body.latitude, req.body.longitude, function(resultObj) {
+                if('cards' in resultObj) {
+                    var newSessionCards = SessionCards({
+                        user_id: req.body.user_id,
+                    });
+                    resultObj.cards.forEach(function(element) {
+                        newSessionCards.sorted_cards.push(element);
+                    });
+                    SessionCards.findOne({'user_id': req.body.user_id}, function(err, session) {
+                        session.remove();
+                        newSessionCards.save();
+                    });
+                    res.json(resultObj.cards.slice(0,10));
+                } else { 
+                    res.json(resultObj);
+                }
+            });
+        } else {
+            var idx = req.body.start_idx;
+            SessionCards.findOne({'user_id': req.body.user_id}).populate('sorted_cards').exec(function(err, session) {
+                if(err || !session) {
+                    res.json({"message": "Session Expired"});
+                } else if (session.created_at) {
+
+                } else {
+                    console.log(session);
+                    res.json({"cards": session.sorted_cards.slice(idx, idx+10)});
+                }
+            });  
+
+        }
+    } else {
+        fetchCards(req.body.user_id, null, req.body.latitude, req.body.longitude, function(resultObj) {
+            res.json(resultObj);
+        });
+    }
     
     
-    Card.find().lean().exec(function (err, cards) {
+    /*Card.find().lean().exec(function (err, cards) {
         if (err) {
             console.log(err);
             res.json({ "message": "unable to fetch cards" });
@@ -160,7 +237,7 @@ router.post("/getCards", function (req, res) {
             }
             
         }
-    })
+    })*/
 });
 
 
