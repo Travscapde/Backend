@@ -182,10 +182,12 @@ router.post("/getCards", function (req, res) {
                         newSessionCards.sorted_cards.push(element);
                     });
                     SessionCards.findOne({'user_id': req.body.user_id}, function(err, session) {
-                        session.remove();
+                        if(session) {
+                            session.remove(); 
+                        }
                         newSessionCards.save();
                     });
-                    res.json(resultObj.cards.slice(0,10));
+                    res.json({"cards": resultObj.cards.slice(0,10)});
                 } else { 
                     res.json(resultObj);
                 }
@@ -195,10 +197,7 @@ router.post("/getCards", function (req, res) {
             SessionCards.findOne({'user_id': req.body.user_id}).populate('sorted_cards').exec(function(err, session) {
                 if(err || !session) {
                     res.json({"message": "Session Expired"});
-                } else if (session.created_at) {
-
                 } else {
-                    console.log(session);
                     res.json({"cards": session.sorted_cards.slice(idx, idx+10)});
                 }
             });  
