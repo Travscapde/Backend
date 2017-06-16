@@ -608,6 +608,8 @@ router.post("/registerUser", function (req, res) {
                 //res.json({'user': searchedUser});
                 if('profile_pic' in req.body) {
                     searchedUser.profile_pic = req.body.profile_pic;
+                    console.log(searchedUser);
+                    searchedUser.save();
                 }
                 res.json({"user": searchedUser, "user_id": searchedUser._id });
             } else {
