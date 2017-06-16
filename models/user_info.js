@@ -19,6 +19,8 @@ var userInfoSchema = new Schema({
     updated_at: Date,
     interests: [String],
     photo_count: { type: Number, default: 0 },
+    likes_received: { type: Number, default: 0 },
+    bl_received: { type: Number, default: 0 },
     seen_list: [Schema.Types.ObjectId],
     like_list: [Schema.Types.ObjectId],
     bucket_list: [bucketListItem]

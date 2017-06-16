@@ -377,13 +377,14 @@ router.post("/likeCard", function (req, res) {
                     res.json({ 'message': 'card_id not found' });
                     return 0;
                 } else {
-                    //console.log(searchedCard.likes);
+                    UserInfo.findById(searchedCard.user_info_id, function (err, uploader) { 
+                        uploader.likes_received++;
+                        uploader.save();
+                    });
+
                     searchedCard.likes = searchedCard.likes + 1;
-                    //console.log(searchedCard.likes);
                     searchedCard.save();
-                    //console.log(searchedUser.like_list.length);
                     searchedUser.like_list.push(req.body.card_id);
-                    //console.log(searchedUser.like_list.length);
                     searchedUser.save();
                     res.json(searchedCard);
                 }
@@ -432,6 +433,12 @@ router.post("/addToBucket", function (req, res) {
                 if (!searchedUser)
                     res.json('user_id not found');
                 else {
+
+                    UserInfo.findById(searchedCard.user_info_id, function (err, uploader) { 
+                        uploader.bl_received++;
+                        uploader.save();
+                    });
+
                     var locationList = searchedCard.location.split(',');
                     var country = locationList[locationList.length-1].trim();
                     var found = 0;
@@ -550,6 +557,20 @@ router.post("/getBucketList", function (req, res) {
 });*/
 
 
+router.post("/getUserInfo", function (req, res) {
+    var userID = req.body.user_id;
+    if(userID) {
+         UserInfo.findById(userId, function (err, searchedUser) {
+            if(err) {
+                res.json({'message': 'user not found'});        
+            } else {
+                res.json({'user': searchedUser});
+            }
+         });
+    } else {
+        res.json({'message': 'user ID not provided'});
+    }
+});
 
 
 router.post("/getUserCards", function (req, res) {
@@ -715,7 +736,7 @@ router.post("/registerCard", function (req, res) {
                         if (req.body.card_type == "photo") {
                             searchedUser.photo_count = searchedUser.photo_count + 1;
                             searchedUser.save();
-                        }
+                        } 
                         res.json(newCard);
                     }
                 });
