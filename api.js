@@ -133,7 +133,7 @@ router.get("/getCards", function (req, res) {
 
 
 function fetchCards(userID, location, latitude, longitude, callback) {
-    Card.find().lean().exec(function (err, cards) {
+    Card.find().populate('user_info_id').lean().exec(function (err, cards) {
         if (err) {
             console.log(err);
             callback({ "message": "unable to fetch cards" });
@@ -144,6 +144,11 @@ function fetchCards(userID, location, latitude, longitude, callback) {
                     console.log(err);
                     callback({ "message": "unable to fetch user" });
                 } else {
+                    cards.forEach(function(card) {
+                        card.user_name = card.user_info_id.name;
+                        card.user_profile_pic = card.user_info_id.profile_pic;
+                    });
+
                     var sortedCards = CardFunctions.ranker(cards, users[0], location);
                     //console.log(sortedCards.length);
                     CardFunctions.addInfo(sortedCards, users[0], latitude, longitude, 0, function(finalCards, idx) {
