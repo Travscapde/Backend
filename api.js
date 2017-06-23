@@ -144,10 +144,13 @@ function fetchCards(userID, location, latitude, longitude, callback) {
                     console.log(err);
                     callback({ "message": "unable to fetch user" });
                 } else {
-                    cards.forEach(function(card) {
-                        card.user_name = card.user_info_id.name;
-                        card.user_profile_pic = card.user_info_id.profile_pic;
-                    });
+                    /*cards.forEach(function(card) {
+                        if(card.user_name != card.user_info_id.name || card.user_profile_pic != card.user_info_id.profile_pic) {
+                            card.user_name = card.user_info_id.name;
+                            card.user_profile_pic = card.user_info_id.profile_pic;
+                            card.save();
+                        }
+                    });*/
 
                     var sortedCards = CardFunctions.ranker(cards, users[0], location);
                     //console.log(sortedCards.length);
@@ -611,7 +614,8 @@ router.post("/registerUser", function (req, res) {
         } else {
             if (searchedUser) {
                 //res.json({'user': searchedUser});
-                if('profile_pic' in req.body) {
+                if('profile_pic' in req.body && searchedUser.profile_pic != req.body.profile_pic) {
+                    updateCardsUserInfo(searchedUser._id);
                     searchedUser.profile_pic = req.body.profile_pic;
                     console.log(searchedUser);
                     searchedUser.save();
@@ -629,6 +633,23 @@ router.post("/registerUser", function (req, res) {
         }
     });
 });
+
+
+function updateCardsUserInfo(userID) {
+    Card.find({ "user_info_id": userID }).populate('user_info_id').exec(function (err, cards) {
+        if (err) {
+            console.log("Could not update cards");
+        } else {
+            cards.forEach(function(card) {
+                card.user_name = card.user_info_id.name;
+                card.user_profile_pic = card.user_info_id.profile_pic;
+                card.save();
+            });
+        }
+   
+    });
+}
+
 
 router.post("/subscribe", function (req, res) {
     var email = req.body.email;
