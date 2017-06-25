@@ -622,11 +622,11 @@ router.post("/registerUser", function (req, res) {
                 }
                 res.json({"user": searchedUser, "user_id": searchedUser._id });
             } else {
-                newUserInfo.save(function (err) {
+                newUserInfo.save(function (err, savedUser) {
                     if (err) {
                         res.json({ 'message': 'Error creating user, possibly duplicate' });
                     } else {
-                        res.json({ "user_id": newUserInfo._id });
+                        res.json({"user":savedUser, "user_id": newUserInfo._id });
                     }
                 });
             }
