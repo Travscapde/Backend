@@ -11,6 +11,7 @@ var gatherLocationInfo = require('./gatherLocationInfo.js');
 var getLocationScore = require('./gatherWeatherInfo.js');
 var fs = require('fs');
 var http = require("http");
+var https = require("https");
 var request = require('request');
 var imagesize = require('imagesize');
 var requestImageSize  = require('request-image-size');
@@ -84,19 +85,29 @@ router.post("/getLinkPreview", function (req, res) {
             }
 
             imgUrl = imgUrls[idx].src;
-            var request = http.get(imgUrl, function (response) {
+            console.log(imgUrl.substring(0, 5));
+            if(imgUrl.substring(0, 5) == "https") {
+                console.log("https");
+                var req = https.get(imgUrl, responseHandler);    
+            } else {
+                var req = http.get(imgUrl, responseHandler);    
+            }
+            //var req = http.get(imgUrl, function (response) {
+            function responseHandler(response) {
                 imagesize(response, function (err, result) {
                     console.log(result);
-                    if(result.width > 500 && result.height > 300) {
+                    if(result.width > 720 && result.height > 540) {
                         preview.image = imgUrl;
                         res.json(preview);
                     } else {
                         getLargeImage(idx+1);
                     }
                     // we don't need more data
-                    request.abort();
+                    req.abort();
                 });
-            });            
+            }
+
+                   
         }
 
         /*var request = http.get(imgUrl, function (response) {
