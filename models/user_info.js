@@ -23,7 +23,8 @@ var userInfoSchema = new Schema({
     bl_received: { type: Number, default: 0 },
     seen_list: [Schema.Types.ObjectId],
     like_list: [Schema.Types.ObjectId],
-    bucket_list: [bucketListItem]
+    bucket_list: [bucketListItem],
+    user_type: String
 });
 
 userInfoSchema.methods.dudify = function () {
