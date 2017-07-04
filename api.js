@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var UserInfo = require('./models/user_info');
 var Card = require('./models/card');
 var SessionCards = require('./models/session_cards');
+var LocationInfo = require('./models/location_info');
 var CardFunctions = require('./cardFunctions.js');
 var gatherLocationInfo = require('./gatherLocationInfo.js');
 var getLocationScore = require('./gatherWeatherInfo.js');
@@ -787,5 +788,27 @@ router.post("/registerCard", function (req, res) {
     });
 
 });
+
+
+router.post("/adminGetLocations", function (req, res) {
+    var userId = req.body.user_id;
+    
+    UserInfo.findById(userId, function (err, searchedUser) {
+        if (!searchedUser) {
+            res.json('user_id not found');
+        } else {
+            if(searchedUser.user_type == "admin") {
+                LocationInfo.find({}).exec(function(err, locationCards) {
+                    res.json({'locations': locationCards});
+                });
+            } else {
+                res.json('User not admin');
+            }
+        }
+    });
+});
+
+
+
 
 module.exports = router;

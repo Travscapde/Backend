@@ -17,6 +17,7 @@ function gatherLocationInfo (cardID, title, location, callback) {
 					saveLocationInfo(cardID, location, extract, link);
 					callback(location, extract, link);
 				} else {
+					saveLocationInfo(cardID, location, "", "");
 					callback ("", "", "");		
 				}
 			});
