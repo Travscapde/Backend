@@ -810,5 +810,22 @@ router.post("/adminGetLocations", function (req, res) {
 
 
 
+router.post("/adminUpdateLocation", function (req, res) {
+    var locationObj = req.body.location_obj;
+
+    LocationInfo.findById(locationObj._id, function(err, searchedLocation) {
+        if (err) {
+            res.json("Location Object Not Found");
+        } else {
+            searchedLocation.summary = locationObj.summary;
+            searchedLocation.link = locationObj.link; 
+            searchedLocation.save();
+            res.json({'location_obj':searchedLocation});
+        }
+    });
+    
+});
+
+
 
 module.exports = router;
