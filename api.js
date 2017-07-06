@@ -93,7 +93,12 @@ router.post("/getLinkPreview", function (req, res) {
             } else {
                 var req = http.get(imgUrl, responseHandler);    
             }
-            //var req = http.get(imgUrl, function (response) {
+
+            req.on('error', function(err) {
+                console.log("Error in http request");
+                req.end();
+                getLargeImage(idx+1);
+            });
             function responseHandler(response) {
                 imagesize(response, function (err, result) {
                     console.log(result);
