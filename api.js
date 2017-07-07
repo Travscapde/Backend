@@ -313,6 +313,7 @@ router.get("/getInterests", function (req, res) {
 
     res.json({
         "interests": [
+            { "interest": "Art/Culture" },
             { "interest": "Aerial view" },
             { "interest": "Architecture" },
             { "interest": "Biking" },
@@ -335,7 +336,6 @@ router.get("/getInterests", function (req, res) {
             { "interest": "Mountain" },
             { "interest": "Party" },
             { "interest": "Road Trip" },
-            { "interest": "Sailing" },
             { "interest": "Sailing" },
             { "interest": "Sea Beach" },
             { "interest": "Snorkelling" },
