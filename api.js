@@ -91,7 +91,7 @@ router.post("/getLinkPreview", function (req, res) {
             imgUrl = imgUrls[idx].src;
 
             //Handle relative paths
-            if(imgUrl.indexOf('http') == -1) {
+            if(imgUrl.indexOf('http') == -1 && imgUrl.indexOf('.com') == -1) {
                 imgUrl = domainName + '/' + imgUrl;
             }
             console.log(imgUrl);
@@ -120,7 +120,9 @@ router.post("/getLinkPreview", function (req, res) {
             function responseHandler(response) {
                 imagesize(response, function (err, result) {
                     console.log(result);
-                    if(result.width > 720 && result.height > 540) {
+                    if (err || !(result)) {
+                        getLargeImage(idx+1);
+                    } else if(result && result.width > 720 && result.height > 540) {
                         preview.image = imgUrl;
                         res.json(preview);
                     } else {
