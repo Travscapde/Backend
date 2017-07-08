@@ -13,6 +13,7 @@ var getLocationScore = require('./gatherWeatherInfo.js');
 var fs = require('fs');
 var http = require("http");
 var https = require("https");
+var URL = require('url-parse');
 var request = require('request');
 var imagesize = require('imagesize');
 var requestImageSize  = require('request-image-size');
@@ -76,6 +77,8 @@ router.post("/getLinkPreview", function (req, res) {
         console.log(dom.window.document.querySelector("title").textContent); 
         console.log(dom.window.document.querySelector("p").textContent); 
 
+        var domainName = new URL(link).origin;
+        console.log(domainName);
         var imgUrls = dom.window.document.querySelectorAll("img");     
         getLargeImage(0);
 
@@ -86,19 +89,34 @@ router.post("/getLinkPreview", function (req, res) {
             }
 
             imgUrl = imgUrls[idx].src;
-            console.log(imgUrl.substring(0, 5));
-            if(imgUrl.substring(0, 5) == "https") {
-                console.log("https");
-                var req = https.get(imgUrl, responseHandler);    
-            } else {
-                var req = http.get(imgUrl, responseHandler);    
+
+            //Handle relative paths
+            if(imgUrl.indexOf('http') == -1) {
+                imgUrl = domainName + '/' + imgUrl;
+            }
+            console.log(imgUrl);
+
+            
+            try {
+                if(imgUrl.substring(0, 5) == "https") {
+                    console.log("https");
+                    var req = https.get(imgUrl, responseHandler);    
+                } else if (imgUrl.substring(0, 4) == "http") {
+                    var req = http.get(imgUrl, responseHandler);    
+                }
+
+                req.on('error', function(err) {
+                    console.log("Error in http request");
+                    req.end();
+                    getLargeImage(idx+1);
+                });
+
+            } catch(e) {
+                getLargeImage(idx+1);
+                console.log(e);
             }
 
-            req.on('error', function(err) {
-                console.log("Error in http request");
-                req.end();
-                getLargeImage(idx+1);
-            });
+            
             function responseHandler(response) {
                 imagesize(response, function (err, result) {
                     console.log(result);
