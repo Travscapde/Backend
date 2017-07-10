@@ -21,9 +21,54 @@ exports.searchByLocation = function(cards, locationString) {
 
 
 
+
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
+
+
+
 exports.ranker = function(cards, user, location) {
 
-    cards.sort(function (card1, card2) {
+    var testArr = [1,2,3,4,5,6,7,8,9,10];
+    testArr = shuffle(testArr);
+    console.log(testArr);
+
+
+    //Separate Picture and blog cards
+    var pictureCards = cards.filter(function(x) {
+        return (x.card_type == "photo")
+    });
+    var blogCards = cards.filter(function(x) {
+        return (x.card_type == "blog")
+    });
+    console.log(cards.length + " cards split into " + pictureCards.length + " picture cards and " + blogCards.length + " blog cards");
+
+    //Randomize
+    //console.log(pictureCards.splice(0,3));
+    pictureCards = shuffle(pictureCards);
+    blogCards = shuffle(blogCards);
+    //console.log(pictureCards.length + " " + blogCards.length);
+    //console.log(pictureCards.splice(0,3));
+    
+
+    //Rank according to scores
+    pictureCards.sort(function (card1, card2) {
         if(cardScore(card1, user, 111) > cardScore(card2, user, 111)) {
             return -1;
         } else {
@@ -31,26 +76,67 @@ exports.ranker = function(cards, user, location) {
         }
     });
 
+    blogCards.sort(function (card1, card2) {
+        if(cardScore(card1, user, 111) > cardScore(card2, user, 111)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+    //console.log(pictureCards.length + " " + blogCards.length);
+
+
+    //Separate Seen cards
     var i;
-    var seenCards = [];
-    for (i=0;i<cards.length;i++){
-        var idx = user.seen_list.indexOf(cards[i]._id);
+    var seenPictureCards = [];
+    for (i=0;i<pictureCards.length;i++){
+        var idx = user.seen_list.indexOf(pictureCards[i]._id);
         if( idx > -1) {
-            var seenCard = (cards.splice(i, 1))[0];
-            seenCards.push(seenCard);    
+            var seenCard = (pictureCards.splice(i, 1))[0];
+            seenPictureCards.push(seenCard);    
             i--;
         }
     }
+    var seenBlogCards = [];
+    for (i=0;i<blogCards.length;i++){
+        var idx = user.seen_list.indexOf(blogCards[i]._id);
+        if( idx > -1) {
+            var seenCard = (blogCards.splice(i, 1))[0];
+            seenBlogCards.push(seenCard);    
+            i--;
+        }
+    }
+
+    var sortedPictureCards = pictureCards.concat(seenPictureCards);
+    var sortedBlogCards = blogCards.concat(seenBlogCards);
     
-    var sortedCards = cards.concat(seenCards);
+    //console.log(sortedPictureCards.length + " " + sortedBlogCards.length);
 
     
+    //Merge picture and blog cards 
+    //Assume number of picture cards greater than blog cards 
+    var ratio = Math.round(sortedPictureCards.length/sortedBlogCards.length);
+    console.log("ratio " + ratio);
+    var sortedCards = [];
+    var blogIdx = 0;
+    for (i=0; i<sortedPictureCards.length; i+=ratio) {
+        //console.log(sortedPictureCards.length + " " + sortedCards.length);
+        sortedCards.push.apply(sortedCards, sortedPictureCards.slice(i, i+ratio));
+        if (blogIdx < sortedBlogCards.length) {
+            sortedCards.push.apply(sortedCards, sortedBlogCards.slice(blogIdx, blogIdx+1));   
+            blogIdx++; 
+        }
+    }
+    sortedCards.push.apply(sortedCards, sortedBlogCards.slice(blogIdx));   
+
+    console.log(sortedCards.length);
     return sortedCards;
 
 }
 
 function cardScore(card, user, location) {
-    return card.created_at;
+    return 1;
+    //return card.created_at;
 }
 
 
