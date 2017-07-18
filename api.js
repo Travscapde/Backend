@@ -805,7 +805,7 @@ router.post("/registerCard", function (req, res) {
                             searchedUser.photo_count = searchedUser.photo_count + 1;
                             searchedUser.save();
                         } 
-                        res.json(newCard);
+                        res.json({"saved_card": newCard});
                     }
                 });
             });
