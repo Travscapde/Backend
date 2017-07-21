@@ -50,14 +50,14 @@ router.get('/about', function (req, res) {
     res.json({ 'message': 'Welcome to TravnetDiscover Backend!' });
 });
 
-router.get("/getImages", function (req, res) {
+/*router.get("/getImages", function (req, res) {
     res.json(dummyInstance.getImages());
 });
 
 router.get("/getImage", function (req, res) {
     res.json(dummyInstance.getImage());
 });
-
+*/
 
 
 router.post("/getLinkPreview", function (req, res) {
@@ -840,6 +840,31 @@ router.post("/updateLocation", function (req, res) {
             });
         }
     });
+});
+
+
+
+router.get("/getImage", function(req, res) {
+    if('url' in req.query) {
+        var imageURL = req.query.url;
+        //console.log(imageURL);
+
+        var requestSettings = {
+            url: imageURL,
+            method: 'GET',
+            encoding: null
+        };
+
+        request(requestSettings, function(error, response, body) {
+            res.set('Content-Type', 'image');
+            res.send(body);
+        });
+
+    } else {
+        res.json({ "message": "No url" });
+    }
+
+
 });
 
 
