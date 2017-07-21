@@ -24,7 +24,9 @@ var userInfoSchema = new Schema({
     seen_list: [Schema.Types.ObjectId],
     like_list: [Schema.Types.ObjectId],
     bucket_list: [bucketListItem],
-    user_type: String
+    user_type: String,
+    location_lat: Number,
+    location_lng: Number
 });
 
 userInfoSchema.methods.dudify = function () {

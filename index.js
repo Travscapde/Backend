@@ -11,7 +11,7 @@ var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 var authInfo = require("./auth_info.json");
 var options = authInfo.dp_options;
-mongoose.connect('mongodb://54.169.51.25:27017/mytestdatabase', options);
+mongoose.connect('mongodb://54.169.111.95:27017/mytestdatabase', options);
 
 //support posting
 var bodyParser = require('body-parser');

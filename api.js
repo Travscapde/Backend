@@ -815,6 +815,34 @@ router.post("/registerCard", function (req, res) {
 });
 
 
+
+
+router.post("/updateLocation", function (req, res) {
+    var userId = req.body.user_id;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
+
+    console.log(userId);
+
+
+    UserInfo.findById(userId, function (err, searchedUser) {
+        if (!searchedUser)
+            res.json('user_id not found');
+        else {
+            searchedUser.updated_at = new Date();
+            searchedUser.location_lat = lat;
+            searchedUser.location_lng = lng;
+            searchedUser.save(function (err) {
+                if (err)
+                    res.json({ "message": "Error updating user interest" });
+                else
+                    res.json({ "user_id": userId });
+            });
+        }
+    });
+});
+
+
 router.post("/adminGetLocations", function (req, res) {
     var userId = req.body.user_id;
     
