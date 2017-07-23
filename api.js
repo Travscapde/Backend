@@ -659,10 +659,11 @@ router.post("/registerUser", function (req, res) {
                 if('profile_pic' in req.body && searchedUser.profile_pic != req.body.profile_pic) {
                     updateCardsUserInfo(searchedUser._id);
                     searchedUser.profile_pic = req.body.profile_pic;
-                    searchedUser.number_visit++;
-                    console.log(searchedUser);
                     searchedUser.save();
                 }
+                searchedUser.number_visit++;
+                console.log(searchedUser);
+                searchedUser.save();
                 res.json({"user": searchedUser, "user_id": searchedUser._id });
             } else {
                 newUserInfo.save(function (err, savedUser) {
