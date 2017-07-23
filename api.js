@@ -634,6 +634,11 @@ router.post("/getUserCards", function (req, res) {
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
 router.post("/registerUser", function (req, res) {
+    if(!('email' in req.body) || req.body.email == "") {
+        res.json({"message": "Inavlid email"});
+    }
+
+
     var newUserInfo = UserInfo({
         name: req.body.name,
         email: req.body.email,
@@ -647,13 +652,14 @@ router.post("/registerUser", function (req, res) {
 
     UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
         if (err) {
-            res.json({ 'message': 'Error creating user' });
+            res.json({ 'message': 'Error connecting to database' });
         } else {
             if (searchedUser) {
                 //res.json({'user': searchedUser});
                 if('profile_pic' in req.body && searchedUser.profile_pic != req.body.profile_pic) {
                     updateCardsUserInfo(searchedUser._id);
                     searchedUser.profile_pic = req.body.profile_pic;
+                    searchedUser.number_visit++;
                     console.log(searchedUser);
                     searchedUser.save();
                 }

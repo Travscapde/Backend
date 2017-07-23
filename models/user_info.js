@@ -26,7 +26,8 @@ var userInfoSchema = new Schema({
     bucket_list: [bucketListItem],
     user_type: String,
     location_lat: Number,
-    location_lng: Number
+    location_lng: Number,
+    number_visit: {type: Number, default: 0}
 });
 
 userInfoSchema.methods.dudify = function () {
