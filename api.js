@@ -69,7 +69,7 @@ router.post("/getLinkPreview", function (req, res) {
         var preview = {
             title: "",
             extract: "",
-            image: ""
+            image: [],
         };
         preview.title = dom.window.document.querySelector("title").textContent;
         preview.extract = dom.window.document.querySelector("p").textContent;
@@ -80,6 +80,7 @@ router.post("/getLinkPreview", function (req, res) {
         var domainName = new URL(link).origin;
         console.log(domainName);
         var imgUrls = dom.window.document.querySelectorAll("img");     
+
         getLargeImage(0);
 
         function getLargeImage(idx) {
@@ -123,8 +124,12 @@ router.post("/getLinkPreview", function (req, res) {
                     if (err || !(result)) {
                         getLargeImage(idx+1);
                     } else if(result && result.width > 720 && result.height > 540) {
-                        preview.image = imgUrl;
-                        res.json(preview);
+                        preview.image.push(imgUrl);
+                        if(preview.image.length == 3) {
+                            res.json(preview);
+                        } else {
+                            getLargeImage(idx+1);
+                        }
                     } else {
                         getLargeImage(idx+1);
                     }
