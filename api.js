@@ -457,12 +457,24 @@ router.post("/seenCard", function (req, res) {
             res.json({ 'message': 'user_id not found' });
             return 0;
         } else {
-            if (searchedUser.seen_list.indexOf(req.body.card_id) > -1) {
-                //console.log("duplicate");
-            } else {
-                searchedUser.seen_list.push(req.body.card_id);
-                searchedUser.save();
+            var cards = (req.body.cards); 
+            console.log(cards.length);
+            var i;
+            for (i=0;i<cards.length;i++) {
+                var id = cards[i];
+                console.log(id);
+                if (searchedUser.seen_list.indexOf(id) > -1) {
+                    //console.log("duplicate");
+                } else {
+                    searchedUser.seen_list.push(id);
+                    Card.findById(id, function(err, searchedCard) {
+                        searchedCard.seen_count++;
+                        searchedCard.save();
+                    });
+                }
             }
+
+            searchedUser.save();
             res.json(searchedUser);
         }
     });
@@ -511,7 +523,7 @@ router.post("/addToBucket", function (req, res) {
 
 
                     //searchedUser.bucket_list.push(req.body.card_id);
-                    searchedCard.bucket_users.push(req.body.user_id);
+                    //searchedCard.bucket_users.push(req.body.user_id);
                     searchedCard.bucket_count = searchedCard.bucket_count + 1;
                     searchedCard.save();
                     //searchedUser.save();

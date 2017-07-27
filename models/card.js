@@ -30,7 +30,8 @@ var cardSchema = new Schema({
     interests: [String],
 
     bucket_users: [Schema.Types.ObjectId],
-    bucket_count: { type: Number, default: 0 }
+    bucket_count: { type: Number, default: 0 },
+    seen_count: {type: Number, default: 0}
 });
 
 cardSchema.methods.like = function () {
