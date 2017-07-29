@@ -43,11 +43,7 @@ function shuffle(array) {
 
 
 
-exports.ranker = function(cards, user, location) {
-
-    var testArr = [1,2,3,4,5,6,7,8,9,10];
-    testArr = shuffle(testArr);
-    console.log(testArr);
+exports.ranker = function(cards, user, latitude, longitude) {
 
 
     //Separate Picture and blog cards
@@ -69,7 +65,7 @@ exports.ranker = function(cards, user, location) {
 
     //Rank according to scores
     pictureCards.sort(function (card1, card2) {
-        if(cardScore(card1, user, 111) > cardScore(card2, user, 111)) {
+        if(cardScore(card1, user, latitude, longitude) > cardScore(card2, user, latitude, longitude)) {
             return -1;
         } else {
             return 1;
@@ -77,7 +73,7 @@ exports.ranker = function(cards, user, location) {
     });
 
     blogCards.sort(function (card1, card2) {
-        if(cardScore(card1, user, 111) > cardScore(card2, user, 111)) {
+        if(cardScore(card1, user, latitude, longitude) > cardScore(card2, user, latitude, longitude)) {
             return -1;
         } else {
             return 1;
@@ -134,8 +130,45 @@ exports.ranker = function(cards, user, location) {
 
 }
 
-function cardScore(card, user, location) {
-    return 1;
+function cardScore(card, user, latitude, longitude) {
+    var score = 0;
+
+
+    //Like to Seen Ratio
+    var likes_score;
+    if (card.seen_count != 0) {
+        likes_score = card.likes/card.seen_count;
+    } else {
+        likes_score = 0.3;
+    }
+
+    //Interest match
+    var interest_score = 0;
+    var i;
+    for (i=0;i<card.interests.length;i++) {
+        if(user.interests.indexOf(card.interests[i]) != -1) {
+            interest_score++;
+        }
+    }
+
+    //Location
+    var proximity_score = 0;
+    if (user.location_lat != 500 && user.location_lng != 500) {
+        var distance = getDistanceFromLatLonInKm(user.location_lat, user.location_lng, card.latitude, card.longitude);
+        if (distance < 1000) {
+            proximity_score = 1;
+        } else if (distance < 3700) {
+            proximity_score = 0.6;
+        } else if (distance < 9300) {
+            proximity_score = 0.3;
+        } else {
+            proximity_score = 0;
+        }
+    }
+
+    score = (1*likes_score) + (1*interest_score) + (1*proximity_score); 
+
+    return score;
     //return card.created_at;
 }
 

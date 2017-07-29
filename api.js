@@ -194,7 +194,7 @@ function fetchCards(userID, location, latitude, longitude, callback) {
                         }
                     });*/
 
-                    var sortedCards = CardFunctions.ranker(cards, users[0], location);
+                    var sortedCards = CardFunctions.ranker(cards, users[0], latitude, longitude);
                     //console.log(sortedCards.length);
                     CardFunctions.addInfo(sortedCards, users[0], latitude, longitude, 0, function(finalCards, idx) {
                         callback({ "cards": finalCards });
