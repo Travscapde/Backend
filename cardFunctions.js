@@ -125,6 +125,12 @@ exports.ranker = function(cards, user, latitude, longitude) {
     }
     sortedCards.push.apply(sortedCards, sortedBlogCards.slice(blogIdx));   
 
+    var j;
+    console.log("Scores");
+    for (j=0;j<sortedCards.length;j++) {
+        console.log(cardScore(sortedCards[j], user, latitude, longitude));
+    }
+
     console.log(sortedCards.length);
     return sortedCards;
 
@@ -136,11 +142,15 @@ function cardScore(card, user, latitude, longitude) {
 
     //Like to Seen Ratio
     var likes_score;
-    if (card.seen_count != 0) {
+    if (card.seen_count && card.seen_count != 0) {
         likes_score = card.likes/card.seen_count;
     } else {
         likes_score = 0.3;
     }
+
+    if(likes_score > 1)
+        likes_score = 1;
+
 
     //Interest match
     var interest_score = 0;
@@ -168,6 +178,7 @@ function cardScore(card, user, latitude, longitude) {
 
     score = (1*likes_score) + (1*interest_score) + (1*proximity_score); 
 
+    console.log(score + " " + likes_score + " " + interest_score + " " + proximity_score);
     return score;
     //return card.created_at;
 }
