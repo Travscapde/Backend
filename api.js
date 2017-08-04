@@ -673,6 +673,12 @@ router.post("/registerUser", function (req, res) {
         } else {
             if (searchedUser) {
                 //res.json({'user': searchedUser});
+                if (('type' in req.body) && req.body.type == "custom") {
+                    if ((!('password' in req.body) || req.body.password != "travscapade")) {
+                        res.json({"message": "Inavlid password"});
+                    }
+                }
+
                 if('profile_pic' in req.body && searchedUser.profile_pic != req.body.profile_pic) {
                     updateCardsUserInfo(searchedUser._id);
                     searchedUser.profile_pic = req.body.profile_pic;
@@ -683,13 +689,17 @@ router.post("/registerUser", function (req, res) {
                 searchedUser.save();
                 res.json({"user": searchedUser, "user_id": searchedUser._id });
             } else {
-                newUserInfo.save(function (err, savedUser) {
-                    if (err) {
-                        res.json({ 'message': 'Error creating user, possibly duplicate' });
-                    } else {
-                        res.json({"user":savedUser, "user_id": newUserInfo._id });
-                    }
-                });
+                if (('type' in req.body) && req.body.type == "custom") {
+                    res.json({"message": "No User Found"});
+                } else {
+                    newUserInfo.save(function (err, savedUser) {
+                        if (err) {
+                            res.json({ 'message': 'Error creating user, possibly duplicate' });
+                        } else {
+                            res.json({"user":savedUser, "user_id": newUserInfo._id });
+                        }
+                    });
+                }
             }
         }
     });
