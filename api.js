@@ -679,7 +679,7 @@ router.post("/registerUser", function (req, res) {
                     }
                 }
 
-                if('profile_pic' in req.body && searchedUser.profile_pic != req.body.profile_pic) {
+                if('profile_pic' in req.body && req.body.profile_pic && searchedUser.profile_pic != req.body.profile_pic) {
                     updateCardsUserInfo(searchedUser._id);
                     searchedUser.profile_pic = req.body.profile_pic;
                     searchedUser.save();
