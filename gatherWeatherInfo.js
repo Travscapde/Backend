@@ -263,7 +263,7 @@ function normalizeScore(scores) {
 
 
 module.exports =  {
-	gatherLocationScore: getLocationScore,
+	getLocationScore: getLocationScore,
 	calculateWeatherScore: calculateWeatherScore,
 	normalizeScore: normalizeScore
 }
