@@ -39,11 +39,11 @@ function getWeatherInfo (card) {
 	var latitude = card.latitude;
 	var longitude = card.longitude;
 
-	var replies = [{},{},{},{},{},{},{},{},{},{},{},{},{}];
+	var replies = [{},{},{},{},{},{},{},{},{},{},{},{}];
 	var noOfReplies = 0;
 
 	var month;
-	for (month=1;month<13;month++) {
+	for (month=0;month<12;month++) {
 		setTimeout(function(monthStr, latitude, longitude) {
 			getWeatherMonth (monthStr, latitude, longitude, function(month, reply) {
 				replies[month] = reply;
@@ -106,7 +106,7 @@ function saveweatherInfo(card, replies) {
 
 
 	var month;
-	for (month=1;month<13;month++) {
+	for (month=0;month<12;month++) {
 		newWeatherInfoObj.high_temp_max.push(replies[month].trip.temp_high.max.C);
 		newWeatherInfoObj.high_temp_avg.push(replies[month].trip.temp_high.avg.C);
 		newWeatherInfoObj.high_temp_min.push(replies[month].trip.temp_high.min.C);
@@ -120,16 +120,33 @@ function saveweatherInfo(card, replies) {
 		newWeatherInfoObj.precip_min.push(replies[month].trip.precip.min.cm);
 	}
 
-	for (month=1;month<13;month++) {
-		var score = calculateWeatherScore(newWeatherInfoObj.high_temp_avg[month], 
-															Math.max.apply(null, newWeatherInfoObj.high_temp_avg),
-															Math.min.apply(null, newWeatherInfoObj.high_temp_avg),
-															newWeatherInfoObj.precip_avg[month]);
-		newWeatherInfoObj.score.push(score);	
+
+	//Check Validity
+	var dataValid = 0;
+	var j;
+	for (j=0;j<12;j++) {
+		if (newWeatherInfoObj.precip_avg[j] != 0.0) {
+			dataValid = 1;
+			break;
+		}
 	}
 
-	newWeatherInfoObj.score = normalizeScore(newWeatherInfoObj.score);
+	if (dataValid == 0) {
+		console.log("Data Invalid");
+		newWeatherInfoObj.score = [-1, -1, -1, -1, -1, -1, -1, -1 ,-1 ,-1, -1, -1];
+	} else {
 
+		for (month=0;month<12;month++) {
+			var score = calculateWeatherScore(newWeatherInfoObj.high_temp_avg[month], 
+																Math.max.apply(null, newWeatherInfoObj.high_temp_avg),
+																Math.min.apply(null, newWeatherInfoObj.high_temp_avg),
+																newWeatherInfoObj.precip_avg[month]);
+			newWeatherInfoObj.score.push(score);	
+		}
+
+		newWeatherInfoObj.score = normalizeScore(newWeatherInfoObj.score);
+	
+	}
 
 
 	//console.log(newWeatherInfoObj);
@@ -159,44 +176,57 @@ function saveweatherInfo(card, replies) {
 
 function calculateWeatherScore(temp, temp_max, temp_min, precip) {
 
-	var score = 0;
+	var tempScore = 0;
+	var tempWeight;
 
 	
-	if(temp > 15 && temp < 30) {
-		score=score+2;
-	} else if (temp > 5 && temp > 35) {
-		score=score+1;
-	}
 
+	if(temp >= 20 && temp <= 33) {
+		tempScore=tempScore+2;
+	} else if (temp > 15 && temp < 38) {
+		tempScore=tempScore+1;
+	}
 
 	//Cold region
-	if(temp_max<5) {
+	if(temp_max<15) {
 		var range = temp_max - temp_min;
 		if(temp > (temp_min + 0.8*range)) {
-			score=score+2;
+			tempScore=tempScore+2;
 		} else if (temp > (temp_min + 0.5*range)) {
-			score=score+1;
+			tempScore=tempScore+1;
 		}
 	}
-
 
 	//Hot region
-	if(temp_min<35) {
+	if(temp_min>38) {
 		var range = temp_max - temp_min;
 		if(temp < (temp_max - 0.8*range)) {
-			score=score+2;
+			tempScore=tempScore+2;
 		} else if (temp < (temp_max - 0.5*range)) {
-			score=score+1;
+			tempScore=tempScore+1;
 		}
 	}
 
-
-	if (precip < 3) {
-		score=score+2;
-	} else if (precip < 4) {
-		score = score + 1;
+	if ((temp_max - temp_min) < 5) {
+		tempWeight = 0;
+	} else {
+		tempWeight = 1;
 	}
 
+	//console.log(temp + " " + temp_max + " " + temp_min + " " + tempScore + " " + tempWeight);
+
+
+	var precipScore = 0;
+	var precipWeight = 1;
+
+
+	if (precip < 2.2) {
+		precipScore=precipScore+2;
+	} else if (precip < 4) {
+		precipScore = precipScore + 1;
+	}
+
+	var score = tempWeight*tempScore + precipWeight*precipScore;
 
 	return score;
 
@@ -205,17 +235,26 @@ function calculateWeatherScore(temp, temp_max, temp_min, precip) {
 
 
 function normalizeScore(scores) {
-	var month, maxScore=0;
-	for (month=1;month<13;month++) {
+	var month, maxScore=0, minScore=1000;
+	for (month=0;month<12;month++) {
+		if (scores[month] < minScore) {
+			minScore = scores[month];
+		}
 		if(scores[month] > maxScore) {
 			maxScore = scores[month];
 		}
 	}
 
-	var factor = 3.0/maxScore;
+	var factor;
+	if (maxScore-minScore == 0) {
+		return [-1, -1, -1, -1, -1, -1, -1, -1 ,-1 ,-1, -1, -1];
+	} else {
+		factor = 3.0/(maxScore-minScore);
+	}
+	//console.log(maxScore + " " + factor);
 
-	for (month=1;month<13;month++) {
-		scores[month] = scores[month] * factor;
+	for (month=0;month<12;month++) {
+		scores[month] = (scores[month] - minScore) * factor;
 	}
 
 	//console.log(scores);
@@ -223,4 +262,8 @@ function normalizeScore(scores) {
 }
 
 
-module.exports = getLocationScore;
+module.exports =  {
+	gatherLocationScore: getLocationScore,
+	calculateWeatherScore: calculateWeatherScore,
+	normalizeScore: normalizeScore
+}
