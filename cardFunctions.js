@@ -305,6 +305,13 @@ function addVisaInfo (cards, user) {
 
 
 
+function findInBucketList(element) { 
+    return element.name === 'cherries';
+}
+
+
+
+
 exports.addInfo = function(cards, user, latitude, longitude, idx, callback) {
 
     var i;
@@ -317,7 +324,15 @@ exports.addInfo = function(cards, user, latitude, longitude, idx, callback) {
         }
          
         //Checking if user bucket listed the card
-        if (user.bucket_list.indexOf(cards[i]._id) > -1) {
+        var bucketListed = 0;
+        for (var j=0;j<user.bucket_list.length;j++) {
+            if (user.bucket_list[j].cards.indexOf(cards[i]._id) > -1) {
+                bucketListed = 1;
+                break;
+            }
+        }
+
+        if (bucketListed == 1) {
             cards[i].is_bucket_listed = true;
         } else {
             cards[i].is_bucket_listed = false;
