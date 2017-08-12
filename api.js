@@ -244,11 +244,21 @@ router.post("/getCards", function (req, res) {
             });
         } else {
             var idx = req.body.start_idx;
-            SessionCards.findOne({'user_id': req.body.user_id}).populate('sorted_cards').exec(function(err, session) {
+            SessionCards.findOne({'user_id': req.body.user_id}).populate('sorted_cards').lean().exec(function(err, session) {
                 if(err || !session) {
                     res.json({"message": "Session Expired"});
                 } else {
-                    res.json({"cards": session.sorted_cards.slice(idx, idx+10)});
+                    UserInfo.find({"_id" : req.body.user_id}, function(err, users) {
+                        if (err) {
+                            console.log(err);
+                            callback({ "message": "unable to fetch user" });
+                        } else {
+                            var rawCards = session.sorted_cards.slice(idx, idx+10);
+                            CardFunctions.addInfo(rawCards, users[0], req.body.latitude, req.body.longitude, 0, function(finalCards, idx) {
+                                res.json({ "cards": finalCards });
+                            });
+                        }
+                    });    
                 }
             });  
 
