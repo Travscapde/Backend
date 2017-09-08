@@ -560,9 +560,13 @@ router.post("/getBucketList", function (req, res) {
         } else {
             var count = 0;
             for(var i=0;i<populatedUser.bucket_list.length;i++) {
-                populatedUser.bucket_list[i].cards.visa_info = "";
-                console.log((populatedUser.bucket_list[i].cards));
-                CardFunctions.addInfo(populatedUser.bucket_list[i].cards, populatedUser, 500, 500, i, function(updatedCards, idx) {
+                var uniqueCards = populatedUser.bucket_list[i].cards.filter(function(elem, index, self) {
+                    return index == self.indexOf(elem);
+                })
+
+                //populatedUser.bucket_list[i].cards.visa_info = "";
+                //console.log((populatedUser.bucket_list[i].cards));
+                CardFunctions.addInfo(uniqueCards, populatedUser, 500, 500, i, function(updatedCards, idx) {
                     //console.log(updatedCards);
                     populatedUser.bucket_list[idx].cards = updatedCards;
                     count++;
