@@ -95,12 +95,11 @@ router.post("/getLinkPreview", function (req, res) {
             if(imgUrl.indexOf('http') == -1 && imgUrl.indexOf('.com') == -1) {
                 imgUrl = domainName + '/' + imgUrl;
             }
-            console.log(imgUrl);
+            //console.log(imgUrl);
 
             
             try {
                 if(imgUrl.substring(0, 5) == "https") {
-                    console.log("https");
                     var req = https.get(imgUrl, responseHandler);    
                 } else if (imgUrl.substring(0, 4) == "http") {
                     var req = http.get(imgUrl, responseHandler);    
@@ -120,7 +119,6 @@ router.post("/getLinkPreview", function (req, res) {
             
             function responseHandler(response) {
                 imagesize(response, function (err, result) {
-                    console.log(result);
                     if (err || !(result)) {
                         getLargeImage(idx+1);
                     } else if(result && result.width > 720 && result.height > 540) {
@@ -472,7 +470,7 @@ router.post("/seenCard", function (req, res) {
             var i;
             for (i=0;i<cards.length;i++) {
                 var id = cards[i];
-                console.log(id);
+                //console.log(id);
                 if (searchedUser.seen_list.indexOf(id) > -1) {
                     //console.log("duplicate");
                 } else {
@@ -699,7 +697,7 @@ router.post("/registerUser", function (req, res) {
                     searchedUser.save();
                 }
                 searchedUser.number_visit++;
-                console.log(searchedUser);
+                //console.log(searchedUser);
                 searchedUser.save();
                 res.json({"user": searchedUser, "user_id": searchedUser._id });
             } else {
