@@ -679,6 +679,38 @@ router.post("/registerUser", function (req, res) {
         facebook_id: req.body.facebook_id
     });
 
+
+    //Special user to test first time use case
+    if (req.body.email == 'travscapade@gmail.com') {
+        UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
+            if (err) {
+
+            } else {
+                if (searchedUser) {
+                    searchedUser.interests=[];
+                    delete searchedUser.location_lat;
+                    delete searchedUser.location_lng;
+                    searchedUser.number_visit=0;
+                    searchedUser.seen_list=[];
+                    searchedUser.save();
+                    res.json({"user": searchedUser, "user_id": searchedUser._id });
+                } else {
+                    newUserInfo.save(function (err, savedUser) {
+                        if (err) {
+                            res.json({ 'message': 'Error creating user, possibly duplicate' });
+                        } else {
+                            res.json({"user":savedUser, "user_id": newUserInfo._id });
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+
+
+
     UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
         if (err) {
             res.json({ 'message': 'Error connecting to database' });
