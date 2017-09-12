@@ -688,7 +688,9 @@ router.post("/registerUser", function (req, res) {
             } else {
                 if (searchedUser) {
                     searchedUser.interests=[];
-                    delete searchedUser.location_lat;
+                    searchedUser.location_lat=null;
+		    searchedUser.location_lng=null;
+		    delete searchedUser.location_lat;
                     delete searchedUser.location_lng;
                     searchedUser.number_visit=0;
                     searchedUser.seen_list=[];
@@ -708,7 +710,7 @@ router.post("/registerUser", function (req, res) {
                 }
             }
         });
-
+        return;
     }
 
 
