@@ -53,7 +53,7 @@ exports.ranker = function(cards, user, latitude, longitude) {
     var blogCards = cards.filter(function(x) {
         return (x.card_type == "blog")
     });
-    console.log(cards.length + " cards split into " + pictureCards.length + " picture cards and " + blogCards.length + " blog cards");
+    //console.log(cards.length + " cards split into " + pictureCards.length + " picture cards and " + blogCards.length + " blog cards");
 
     //Randomize
     //console.log(pictureCards.splice(0,3));
@@ -112,7 +112,7 @@ exports.ranker = function(cards, user, latitude, longitude) {
     //Merge picture and blog cards 
     //Assume number of picture cards greater than blog cards 
     var ratio = Math.round(sortedPictureCards.length/sortedBlogCards.length);
-    console.log("ratio " + ratio);
+    //console.log("ratio " + ratio);
     var sortedCards = [];
     var blogIdx = 0;
     for (i=0; i<sortedPictureCards.length; i+=ratio) {
@@ -126,12 +126,12 @@ exports.ranker = function(cards, user, latitude, longitude) {
     sortedCards.push.apply(sortedCards, sortedBlogCards.slice(blogIdx));   
 
     var j;
-    console.log("Scores");
+    //console.log("Scores");
     for (j=0;j<sortedCards.length;j++) {
         console.log(cardScore(sortedCards[j], user, latitude, longitude));
     }
 
-    console.log(sortedCards.length);
+    //console.log(sortedCards.length);
     return sortedCards;
 
 }
@@ -178,7 +178,7 @@ function cardScore(card, user, latitude, longitude) {
 
     score = (1*likes_score) + (1*interest_score) + (1*proximity_score); 
 
-    console.log(score + " " + likes_score + " " + interest_score + " " + proximity_score);
+    //console.log(score + " " + likes_score + " " + interest_score + " " + proximity_score);
     return score;
     //return card.created_at;
 }
