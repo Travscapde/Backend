@@ -128,7 +128,7 @@ exports.ranker = function(cards, user, latitude, longitude) {
     var j;
     //console.log("Scores");
     for (j=0;j<sortedCards.length;j++) {
-        console.log(cardScore(sortedCards[j], user, latitude, longitude));
+        //console.log(cardScore(sortedCards[j], user, latitude, longitude));
     }
 
     //console.log(sortedCards.length);
