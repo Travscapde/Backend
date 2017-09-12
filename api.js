@@ -694,17 +694,21 @@ router.post("/registerUser", function (req, res) {
                     searchedUser.seen_list=[];
                     searchedUser.save();
                     res.json({"user": searchedUser, "user_id": searchedUser._id });
+                    return;
                 } else {
                     newUserInfo.save(function (err, savedUser) {
                         if (err) {
                             res.json({ 'message': 'Error creating user, possibly duplicate' });
+                            return;
                         } else {
                             res.json({"user":savedUser, "user_id": newUserInfo._id });
+                            return;
                         }
                     });
                 }
             }
         });
+
     }
 
 
