@@ -8,7 +8,8 @@ var bucketListItem = new Schema({
 
 var userInfoSchema = new Schema({
     email: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
+    password: String,
+    name: { type: String },
     date_of_birth: Number,
     home: String,
     living_in: String,

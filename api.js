@@ -17,11 +17,13 @@ var URL = require('url-parse');
 var request = require('request');
 var imagesize = require('imagesize');
 var requestImageSize  = require('request-image-size');
+var password = require('password-hash-and-salt');
+
 //var jsdom = require("node-jsdom");
 const jsdom = require("jsdom");
-const JSDOM = jsdom.JSDOM;
-//var db_manager = require('./db-manager.js');
-//var db = new db_manager();
+const JSDOM = jsdom.JSDOM
+;
+
 
 var dummy = require('./dummy.js');
 var dummyInstance = new dummy();
@@ -74,12 +76,12 @@ router.post("/getLinkPreview", function (req, res) {
         preview.title = dom.window.document.querySelector("title").textContent;
         preview.extract = dom.window.document.querySelector("p").textContent;
 
-        console.log(dom.window.document.querySelector("title").textContent); 
-        console.log(dom.window.document.querySelector("p").textContent); 
+        console.log(dom.window.document.querySelector("title").textContent);
+        console.log(dom.window.document.querySelector("p").textContent);
 
         var domainName = new URL(link).origin;
         console.log(domainName);
-        var imgUrls = dom.window.document.querySelectorAll("img");     
+        var imgUrls = dom.window.document.querySelectorAll("img");
 
         getLargeImage(0);
 
@@ -97,12 +99,12 @@ router.post("/getLinkPreview", function (req, res) {
             }
             //console.log(imgUrl);
 
-            
+
             try {
                 if(imgUrl.substring(0, 5) == "https") {
-                    var req = https.get(imgUrl, responseHandler);    
+                    var req = https.get(imgUrl, responseHandler);
                 } else if (imgUrl.substring(0, 4) == "http") {
-                    var req = http.get(imgUrl, responseHandler);    
+                    var req = http.get(imgUrl, responseHandler);
                 }
 
                 req.on('error', function(err) {
@@ -116,7 +118,7 @@ router.post("/getLinkPreview", function (req, res) {
                 console.log(e);
             }
 
-            
+
             function responseHandler(response) {
                 imagesize(response, function (err, result) {
                     if (err || !(result)) {
@@ -136,7 +138,7 @@ router.post("/getLinkPreview", function (req, res) {
                 });
             }
 
-                   
+
         }
 
         /*var request = http.get(imgUrl, function (response) {
@@ -159,7 +161,7 @@ router.post("/getLinkPreview", function (req, res) {
 
 
 
-    
+
 });
 
 
@@ -177,8 +179,8 @@ function fetchCards(userID, location, latitude, longitude, callback) {
         if (err) {
             console.log(err);
             callback({ "message": "unable to fetch cards" });
-        } else {        
-             
+        } else {
+
             UserInfo.find({"_id" : userID}, function(err, users) {
                 if (err) {
                     console.log(err);
@@ -197,12 +199,12 @@ function fetchCards(userID, location, latitude, longitude, callback) {
                     CardFunctions.addInfo(sortedCards, users[0], latitude, longitude, 0, function(finalCards, idx) {
                         callback({ "cards": finalCards });
                     });
-                            
-                } 
+
+                }
 
             });
-        
-            
+
+
         }
     })
 }
@@ -231,12 +233,12 @@ router.post("/getCards", function (req, res) {
                     });
                     SessionCards.findOne({'user_id': req.body.user_id}, function(err, session) {
                         if(session) {
-                            session.remove(); 
+                            session.remove();
                         }
                         newSessionCards.save();
                     });
                     res.json({"cards": resultObj.cards.slice(0,10)});
-                } else { 
+                } else {
                     res.json(resultObj);
                 }
             });
@@ -256,9 +258,9 @@ router.post("/getCards", function (req, res) {
                                 res.json({ "cards": finalCards });
                             });
                         }
-                    });    
+                    });
                 }
-            });  
+            });
 
         }
     } else {
@@ -266,8 +268,8 @@ router.post("/getCards", function (req, res) {
             res.json(resultObj);
         });
     }
-    
-    
+
+
     /*Card.find().lean().exec(function (err, cards) {
         if (err) {
             console.log(err);
@@ -275,8 +277,8 @@ router.post("/getCards", function (req, res) {
         } else {
             if (typeof req.body.user_id == 'undefined') {
                 console.log("No User ID");
-                res.json({ "cards": cards });        
-            } else {    
+                res.json({ "cards": cards });
+            } else {
                 UserInfo.find({"_id" : req.body.user_id}, function(err, users) {
                     if (err) {
                         console.log(err);
@@ -287,12 +289,12 @@ router.post("/getCards", function (req, res) {
                         CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, 0, function(finalCards, idx) {
                             res.json({ "cards": finalCards });
                         });
-                                
-                    } 
+
+                    }
 
                 });
             }
-            
+
         }
     })*/
 });
@@ -303,7 +305,7 @@ router.post("/getCards", function (req, res) {
 
 router.post("/search", function (req, res) {
     console.log(req.body.location.split(',')[0]);
-    
+
     Card.find().lean().exec(function (err, cards) {
         if (err) {
             console.log(err);
@@ -311,8 +313,8 @@ router.post("/search", function (req, res) {
         } else {
             if (typeof req.body.user_id == 'undefined') {
                 console.log("No User ID");
-                res.json({ "cards": cards });        
-            } else {    
+                res.json({ "cards": cards });
+            } else {
                 UserInfo.find({"_id" : req.body.user_id}, function(err, users) {
                     if (err) {
                         console.log(err);
@@ -324,8 +326,8 @@ router.post("/search", function (req, res) {
                         CardFunctions.addInfo(sortedCards, users[0], req.body.latitude, req.body.longitude, 0, function(finalCards, idx) {
                             res.json({ "cards": finalCards });
                         });
-                                
-                    } 
+
+                    }
 
                 });
             }
@@ -435,7 +437,7 @@ router.post("/likeCard", function (req, res) {
                     res.json({ 'message': 'card_id not found' });
                     return 0;
                 } else {
-                    UserInfo.findById(searchedCard.user_info_id, function (err, uploader) { 
+                    UserInfo.findById(searchedCard.user_info_id, function (err, uploader) {
                         uploader.likes_received++;
                         uploader.save();
                     });
@@ -448,7 +450,7 @@ router.post("/likeCard", function (req, res) {
                 }
             });
 
-            
+
         }
     });
 
@@ -465,7 +467,7 @@ router.post("/seenCard", function (req, res) {
             res.json({ 'message': 'user_id not found' });
             return 0;
         } else {
-            var cards = (req.body.cards); 
+            var cards = (req.body.cards);
             console.log(cards.length);
             var i;
             for (i=0;i<cards.length;i++) {
@@ -504,7 +506,7 @@ router.post("/addToBucket", function (req, res) {
                     res.json('user_id not found');
                 else {
 
-                    UserInfo.findById(searchedCard.user_info_id, function (err, uploader) { 
+                    UserInfo.findById(searchedCard.user_info_id, function (err, uploader) {
                         uploader.bl_received++;
                         uploader.save();
                     });
@@ -573,9 +575,9 @@ router.post("/getBucketList", function (req, res) {
 
                     }
 
-                    
+
                 });
-                        
+
             }
 
         }
@@ -615,15 +617,15 @@ router.post("/getBucketList", function (req, res) {
 
                             }
 
-                            
+
                         });
-                                
+
                     }
 
                 }
             })
 
-            
+
 
 
         }
@@ -636,7 +638,7 @@ router.post("/getUserInfo", function (req, res) {
     if(userID) {
          UserInfo.findById(userId, function (err, searchedUser) {
             if(err) {
-                res.json({'message': 'user not found'});        
+                res.json({'message': 'user not found'});
             } else {
                 res.json({'user': searchedUser});
             }
@@ -659,6 +661,65 @@ router.post("/getUserCards", function (req, res) {
         }
     });
 });
+
+
+
+router.post("/registerCustomUser", function (req, res) {
+    if(!('email' in req.body) || req.body.email == "" || !('password' in req.body) || req.body.password == "") {
+        res.json({"message": "Inavlid email"});
+    }
+
+    var newUserInfo = UserInfo({
+        email: req.body.email,
+        name: req.body.name,
+    });
+
+    UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
+        if (err) {
+            res.json({ 'message': 'Error connecting to database' });
+        } else {
+            if (searchedUser) {
+                //Existing User
+                password(req.body.password).verifyAgainst(searchedUser.password, function(error, verified) {
+                    if(error)
+                        res.json({ 'message': 'Something went wrong' });
+                    if(!verified) {
+                        res.json({ 'message': 'Wrong password' });
+                    } else {
+                        searchedUser.number_visit++;
+                        searchedUser.save();
+                        var userObj = searchedUser.toObject();
+                        delete userObj.password;
+                        res.json({"user": userObj, "user_id": userObj._id });
+                    }
+                });
+            } else {
+                //New User
+                password(req.body.password).hash(function(error, hash) {
+                    if (error) {
+
+                    } else {
+                        newUserInfo.password = hash;
+                        newUserInfo.save(function(err, savedUser) {
+                            if (err) {
+                                res.json({ 'message': 'Error saving user to database' });
+                            } else {
+                                var userObj = savedUser.toObject();
+                                delete userObj.password;
+                                res.json({"user": userObj, "user_id": userObj._id });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+
+});
+
+
+
+
 
 // assuming POST: name=foo&color=red            <-- URL encoding
 // or       POST: {"name":"foo","color":"red"}  <-- JSON encoding
@@ -767,7 +828,7 @@ function updateCardsUserInfo(userID) {
                 card.save();
             });
         }
-   
+
     });
 }
 
@@ -836,7 +897,7 @@ router.post("/registerNationality", function (req, res) {
             request.abort();
             callback(result.width, result.height);
         });
-    });      
+    });
 }*/
 
 
@@ -876,7 +937,7 @@ router.post("/registerCard", function (req, res) {
             requestImageSize(imgUrl, function(err, size, downloaded) {
                 newCard.picture_width = size.width;
                 newCard.picture_height = size.height;
-                
+
                 newCard.save(function (err, savedCard) {
                     if (err) {
                         res.json({ "message": err });
@@ -888,7 +949,7 @@ router.post("/registerCard", function (req, res) {
                         if (req.body.card_type == "photo") {
                             searchedUser.photo_count = searchedUser.photo_count + 1;
                             searchedUser.save();
-                        } 
+                        }
                         res.json({"saved_card": newCard});
                     }
                 });
@@ -954,7 +1015,7 @@ router.get("/getImage", function(req, res) {
 
 router.post("/adminGetLocations", function (req, res) {
     var userId = req.body.user_id;
-    
+
     UserInfo.findById(userId, function (err, searchedUser) {
         if (!searchedUser) {
             res.json('user_id not found');
@@ -980,12 +1041,12 @@ router.post("/adminUpdateLocation", function (req, res) {
             res.json("Location Object Not Found");
         } else {
             searchedLocation.summary = locationObj.summary;
-            searchedLocation.link = locationObj.link; 
+            searchedLocation.link = locationObj.link;
             searchedLocation.save();
             res.json({'location_obj':searchedLocation});
         }
     });
-    
+
 });
 
 
