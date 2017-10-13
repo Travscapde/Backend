@@ -664,22 +664,17 @@ router.post("/getUserCards", function (req, res) {
 
 
 
-router.post("/registerCustomUser", function (req, res) {
-    if(!('email' in req.body) || req.body.email == "" || !('password' in req.body) || req.body.password == "") {
-        res.json({"message": "Inavlid email"});
-    }
 
-    var newUserInfo = UserInfo({
-        email: req.body.email,
-        name: req.body.name,
-    });
+router.post("/loginCustomUser", function (req, res) {
+    if(!('email' in req.body) || req.body.email == "" || !('password' in req.body) || req.body.password == "") {
+        res.json({"message": "Inavlid email/password"});
+    }
 
     UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
         if (err) {
             res.json({ 'message': 'Error connecting to database' });
         } else {
             if (searchedUser) {
-                //Existing User
                 password(req.body.password).verifyAgainst(searchedUser.password, function(error, verified) {
                     if(error)
                         res.json({ 'message': 'Something went wrong' });
@@ -693,6 +688,32 @@ router.post("/registerCustomUser", function (req, res) {
                         res.json({"user": userObj, "user_id": userObj._id });
                     }
                 });
+            } else {
+                res.json({ 'message': 'Username does not exist' });
+            }
+        }
+    });
+
+});
+
+
+
+router.post("/registerCustomUser", function (req, res) {
+    if(!('email' in req.body) || req.body.email == "" || !('password' in req.body) || req.body.password == "") {
+        res.json({"message": "Inavlid email/password"});
+    }
+
+    var newUserInfo = UserInfo({
+        email: req.body.email,
+        name: req.body.name,
+    });
+
+    UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
+        if (err) {
+            res.json({ 'message': 'Error connecting to database' });
+        } else {
+            if (searchedUser) {
+                res.json({ 'message': 'Username already exists' });
             } else {
                 //New User
                 password(req.body.password).hash(function(error, hash) {
