@@ -1,5 +1,9 @@
 var express = require('express');
 var router = express.Router();
+var multer = require('multer');
+var multerS3 = require('multer-s3')
+var AWS = require('aws-sdk');
+
 var winston = require('winston');
 
 var mongoose = require('mongoose');
@@ -1029,9 +1033,30 @@ router.get("/getImage", function(req, res) {
     } else {
         res.json({ "message": "No url" });
     }
-
-
 });
+
+
+var file = __dirname + '/aws.json';
+var cred = JSON.parse(fs.readFileSync(file, 'utf8'));
+AWS.config.update({ accessKeyId: cred.key, secretAccessKey: cred.secret });
+var s3 = new AWS.S3();
+
+var upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: 'travnet',
+    metadata: function (req, file, cb) {
+      cb(null, {fieldName: file.fieldname});
+    },
+    key: function (req, file, cb) {
+      cb(null, "testfile");
+    }
+  })
+})
+
+router.post('/uploadImage', upload.single('testfilename'), function(req, res) {
+  res.json("Success");
+})
 
 
 router.post("/adminGetLocations", function (req, res) {
