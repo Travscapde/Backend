@@ -1049,7 +1049,7 @@ var upload = multer({
       cb(null, {fieldName: file.fieldname});
     },
     key: function (req, file, cb) {
-      cb(null, req.file_name);
+      cb(null, file.originalname);
     }
   })
 })
