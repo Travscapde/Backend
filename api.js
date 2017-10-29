@@ -1049,12 +1049,12 @@ var upload = multer({
       cb(null, {fieldName: file.fieldname});
     },
     key: function (req, file, cb) {
-      cb(null, file.originalname);
+      cb(null, req.file_name);
     }
   })
 })
 
-router.post('/uploadImage', upload.single('testfilename'), function(req, res) {
+router.post('/uploadImage', upload.single('image_file'), function(req, res) {
   res.json("Success");
 })
 
