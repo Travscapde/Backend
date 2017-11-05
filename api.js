@@ -241,7 +241,7 @@ router.post("/getCards", function (req, res) {
                         }
                         newSessionCards.save();
                     });
-                    registerSeenCards(resultObj.cards.slice(0,10));
+                    registerSeenCards(req.body.user_id, resultObj.cards.slice(0,10));
                     res.json({"cards": resultObj.cards.slice(0,10)});
                 } else {
                     res.json(resultObj);
@@ -260,7 +260,7 @@ router.post("/getCards", function (req, res) {
                         } else {
                             var rawCards = session.sorted_cards.slice(idx, idx+10);
                             CardFunctions.addInfo(rawCards, users[0], req.body.latitude, req.body.longitude, 0, function(finalCards, idx) {
-                                registerSeenCards(finalCards);
+                                registerSeenCards(req.body.user_id, finalCards);
                                 res.json({ "cards": finalCards });
                             });
                         }
@@ -271,7 +271,7 @@ router.post("/getCards", function (req, res) {
         }
     } else {
         fetchCards(req.body.user_id, null, req.body.latitude, req.body.longitude, function(resultObj) {
-            registerSeenCards(resultObj);
+            registerSeenCards(req.body.user_id, resultObj);
             res.json(resultObj);
         });
     }
@@ -466,6 +466,8 @@ router.post("/likeCard", function (req, res) {
 
 
 function registerSeenCards(userID, cards) {
+    console.log(userID);
+    console.log(cards);
     UserInfo.findById(userID, function (err, searchedUser) {
         if (!searchedUser) {
             console.log("user not found");
