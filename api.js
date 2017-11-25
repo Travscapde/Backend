@@ -701,6 +701,7 @@ router.post("/getUserCards", function (req, res) {
 router.post("/loginCustomUser", function (req, res) {
     if(!('email' in req.body) || req.body.email == "" || !('password' in req.body) || req.body.password == "") {
         res.json({"message": "Inavlid email/password"});
+        return();
     }
 
     UserInfo.findOne({ 'email': req.body.email }, function (err, searchedUser) {
@@ -780,6 +781,7 @@ router.post("/registerCustomUser", function (req, res) {
 router.post("/registerUser", function (req, res) {
     if(!('email' in req.body) || req.body.email == "") {
         res.json({"message": "Inavlid email"});
+        return();
     }
 
 
